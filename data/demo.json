@@ -1,0 +1,43 @@
+{
+  "id": "demo-magazine-001",
+  "title": "Digital Vault",
+  "subtitle": "Financial Cyber Resilience",
+  "tagline": "Protecting Tomorrow's Assets Today",
+  "issueNumber": "01",
+  "issueLabel": "Volume 1, Spring 2025",
+  "themeTitle": "Cyber Security",
+  "themeSummary": "Exploring the intersection of finance and digital security",
+  "publisherName": "Tech Publishing Group",
+  "publisherWebsite": "https://example.com",
+  "landingPageUrl": "https://example.com/digital-vault",
+  "publicationDate": "2025-03-15",
+  "language": "en",
+  "accentColorHex": "#f59e0b",
+  "colorPalette": {
+    "primary": "#1e293b",
+    "secondary": "#f59e0b",
+    "background": "#ffffff",
+    "text": "#0f172a"
+  },
+  "publisherLogoUrl": "",
+  "logoLibrary": [],
+  "sections": [
+    {
+      "id": "section-001",
+      "label": "Cover Story",
+      "title": "The Future of Financial Security",
+      "subtitle": "How AI is reshaping cyber defense in banking",
+      "heroImageUrl": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800",
+      "heroImageAlt": "Digital security concept",
+      "heroImageSource": "url",
+      "keyPoints": [
+        "AI-powered threat detection reduces response time by 95%",
+        "Zero-trust architecture becomes industry standard",
+        "Quantum encryption protects against future threats"
+      ],
+      "pullQuote": "The cost of prevention is always less than the cost of recovery.",
+      "statsLine": "Global cybersecurity spending reached $150B in 2024",
+      "bodyMarkdown": "# The Evolution of Cyber Defense\n\nFinancial institutions face unprecedented challenges in protecting customer data and assets. Traditional security measures are no longer sufficient against sophisticated threat actors.\n\n## AI-Driven Security\n\nMachine learning algorithms now monitor billions of transactions per second, identifying anomalies that would be impossible for humans to detect.\n\n## The Human Factor\n\nDespite technological advances, employee training remains the first line of defense. Organizations that invest in security awareness see 70% fewer successful attacks."
+    }
+  ]
+}
