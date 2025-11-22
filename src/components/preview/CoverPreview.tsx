@@ -1,5 +1,6 @@
 import { Magazine } from "@/types/magazine";
 import { Card } from "@/components/ui/card";
+import { format } from "date-fns";
 
 interface CoverPreviewProps {
   magazine: Magazine;
@@ -81,7 +82,7 @@ export const CoverPreview = ({ magazine }: CoverPreviewProps) => {
         {/* Footer */}
         <div className="mt-6 text-xs opacity-70">
           <p>Issue {magazine.issueNumber}</p>
-          <p>{new Date(magazine.publicationDate).toLocaleDateString()}</p>
+          <p>{format(new Date(magazine.publicationDate), 'MMMM dd, yyyy')}</p>
         </div>
       </div>
     </Card>
