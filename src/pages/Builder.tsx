@@ -5,6 +5,7 @@ import { BuilderHeader } from "@/components/builder/BuilderHeader";
 import { SectionList } from "@/components/builder/SectionList";
 import { SectionEditor } from "@/components/builder/SectionEditor";
 import { PreviewPanel } from "@/components/preview/PreviewPanel";
+import { MagazineSettingsDialog } from "@/components/builder/MagazineSettingsDialog";
 import { toast } from "@/hooks/use-toast";
 
 const Builder = () => {
@@ -12,6 +13,7 @@ const Builder = () => {
   const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(
     magazine.sections[0]?.id
   );
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const selectedSection = magazine.sections.find((s) => s.id === selectedSectionId);
 
@@ -93,7 +95,7 @@ const Builder = () => {
   };
 
   const handleSettings = () => {
-    toast({ title: "Settings panel", description: "Magazine settings editor coming soon" });
+    setSettingsOpen(true);
   };
 
   const handleShare = () => {
@@ -118,6 +120,13 @@ const Builder = () => {
         onExportPDF={handleExportPDF}
         onSettings={handleSettings}
         onShare={handleShare}
+      />
+      
+      <MagazineSettingsDialog
+        magazine={magazine}
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        onUpdate={updateMagazine}
       />
       
       <div className="flex-1 flex overflow-hidden">
