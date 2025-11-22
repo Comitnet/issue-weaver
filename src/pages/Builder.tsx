@@ -4,6 +4,7 @@ import { Section } from "@/types/magazine";
 import { BuilderHeader } from "@/components/builder/BuilderHeader";
 import { SectionList } from "@/components/builder/SectionList";
 import { SectionEditor } from "@/components/builder/SectionEditor";
+import { CoverEditor } from "@/components/builder/CoverEditor";
 import { PreviewPanel } from "@/components/preview/PreviewPanel";
 import { MagazineSettingsDialog } from "@/components/builder/MagazineSettingsDialog";
 import { toast } from "@/hooks/use-toast";
@@ -13,9 +14,20 @@ const Builder = () => {
   const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(
     magazine.sections[0]?.id
   );
+  const [isCoverSelected, setIsCoverSelected] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const selectedSection = magazine.sections.find((s) => s.id === selectedSectionId);
+
+  const handleSelectCover = () => {
+    setIsCoverSelected(true);
+    setSelectedSectionId(undefined);
+  };
+
+  const handleSelectSection = (sectionId: string | undefined) => {
+    setIsCoverSelected(false);
+    setSelectedSectionId(sectionId);
+  };
 
   const handleAddSection = () => {
     const newSection: Section = {
@@ -27,6 +39,7 @@ const Builder = () => {
     };
     updateMagazine({ sections: [...magazine.sections, newSection] });
     setSelectedSectionId(newSection.id);
+    setIsCoverSelected(false);
     toast({ title: "Section added" });
   };
 
@@ -134,19 +147,23 @@ const Builder = () => {
           <SectionList
             sections={magazine.sections}
             selectedSectionId={selectedSectionId}
-            onSelectSection={setSelectedSectionId}
+            onSelectSection={handleSelectSection}
             onAddSection={handleAddSection}
             onDeleteSection={handleDeleteSection}
+            onSelectCover={handleSelectCover}
+            isCoverSelected={isCoverSelected}
           />
         </div>
         
         <div className="flex-1 flex overflow-hidden">
           <div className="w-1/2 overflow-hidden">
-            {selectedSection ? (
+            {isCoverSelected ? (
+              <CoverEditor magazine={magazine} onUpdate={updateMagazine} />
+            ) : selectedSection ? (
               <SectionEditor section={selectedSection} onUpdate={handleUpdateSection} />
             ) : (
               <div className="h-full flex items-center justify-center text-muted-foreground">
-                Select a section to edit
+                Select the cover or a section to edit
               </div>
             )}
           </div>
