@@ -62,10 +62,10 @@ export const CoverPreview = ({ magazine }: CoverPreviewProps) => {
           )}
         </div>
 
-        {/* Cover Lines */}
-        {magazine.sections.length > 0 && (
+        {/* Cover Lines - Key Points */}
+        {magazine.sections.filter(s => s.showOnCover).length > 0 && (
           <div className="mt-8 space-y-2 border-t pt-4" style={{ borderColor: palette.secondary }}>
-            {magazine.sections.slice(0, 3).map((section) => (
+            {magazine.sections.filter(s => s.showOnCover).map((section) => (
               <div key={section.id} className="flex items-center gap-2">
                 <div
                   className="w-1 h-1 rounded-full flex-shrink-0"
