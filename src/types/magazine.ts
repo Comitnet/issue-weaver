@@ -18,6 +18,7 @@ export interface Section {
   pullQuote?: string;
   statsLine?: string;
   bodyMarkdown: string;
+  showOnCover?: boolean;
 }
 
 export interface Magazine {
@@ -75,6 +76,7 @@ export const createDefaultMagazine = (): Magazine => ({
         "Export to PDF and JSON",
       ],
       bodyMarkdown: "# Getting Started\n\nThis is your first section. Edit the content, add images, and customize the layout to create your perfect magazine.\n\n## Key Features\n\n- Rich text editing with Markdown\n- Image management and AI generation\n- Color palette customization\n- Professional print-ready output",
+      showOnCover: true,
     },
   ],
 });

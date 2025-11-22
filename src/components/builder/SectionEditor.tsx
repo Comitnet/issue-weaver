@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface SectionEditorProps {
   section: Section;
@@ -62,6 +63,17 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
               onChange={(e) => onUpdate({ subtitle: e.target.value })}
               placeholder="Optional subtitle"
             />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="showOnCover"
+              checked={section.showOnCover || false}
+              onCheckedChange={(checked) => onUpdate({ showOnCover: checked as boolean })}
+            />
+            <Label htmlFor="showOnCover" className="cursor-pointer">
+              Show this article on cover page
+            </Label>
           </div>
 
           <div>
