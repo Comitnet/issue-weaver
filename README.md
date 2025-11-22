@@ -1,73 +1,50 @@
-# Welcome to your Lovable project
+md
 
-## Project info
+# Magazine Builder
 
-**URL**: https://lovable.dev/projects/f64d0d11-2310-47db-9677-19873d6f8195
+Magazine Builder is an open-source web app for creating, previewing and exporting digital magazines.
 
-## How can I edit this code?
+It’s designed so non-technical editors can build issues like **“Digital Vault – Financial Cyber Resilience”** and then:
 
-There are several ways of editing your application.
+- Export a print-ready PDF (now or in a later backend step)
+- Embed a read-only viewer inside existing sites (including Wix) via `<iframe>`
+- Share or reuse issues via JSON
 
-**Use Lovable**
+Although it was born at **Cyyder Management and Cyber LTD**, the tool is generic and can be used by any publisher.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f64d0d11-2310-47db-9677-19873d6f8195) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## Project info & Lovable
 
-**Use your preferred IDE**
+This project was initially generated with **Lovable**.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Lovable project: (https://lovable.dev/projects/f64d0d11-2310-47db-9677-19873d6f8195)   
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+You can edit it in three main ways:
 
-Follow these steps:
+### 1. Using Lovable
+
+Open the Lovable project and start prompting:
+
+- UI, flows and components can be changed by natural language.
+- Changes made via Lovable are committed directly to this repo.
+
+### 2. Using your own IDE (local dev)
+
+You can also work locally and push changes normally. Pushed changes will be reflected in Lovable.
+
+Requirements: **Node.js + npm**  
+(Recommended: install Node via `nvm`.)
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# 1. Clone the repository using the project's Git URL.
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# 2. Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# 3. Install dependencies.
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 4. Start the development server (Vite) with hot reload.
 npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/f64d0d11-2310-47db-9677-19873d6f8195) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
