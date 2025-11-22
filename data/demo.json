@@ -1,43 +1,101 @@
 {
-  "id": "demo-magazine-001",
+  "id": "digital-vault-issue-1",
   "title": "Digital Vault",
-  "subtitle": "Financial Cyber Resilience",
-  "tagline": "Protecting Tomorrow's Assets Today",
-  "issueNumber": "01",
-  "issueLabel": "Volume 1, Spring 2025",
-  "themeTitle": "Cyber Security",
-  "themeSummary": "Exploring the intersection of finance and digital security",
-  "publisherName": "Tech Publishing Group",
-  "publisherWebsite": "https://example.com",
-  "landingPageUrl": "https://example.com/digital-vault",
-  "publicationDate": "2025-03-15",
+  "subtitle": "Financial Cyber Resilience by CYYDER",
+  "tagline": "Turning cyber chaos into board-ready resilience.",
+  "issueNumber": "1",
+  "issueLabel": "Issue #1 – 2025",
+  "themeTitle": "From Outages to Resilience: Securing Financial Services in a Cloud-First World",
+  "themeSummary": "This inaugural issue of Digital Vault explores how boards, CISOs and risk leaders can turn regulatory pressure, AI disruption and cloud concentration risk into a strategic advantage.",
+  "publisherName": "Cyyder Management and Cyber LTD",
+  "publisherWebsite": "https://cyyder.com",
+  "landingPageUrl": "https://cyyder.com/digital-vault",
+  "publicationDate": "2025-11-01T00:00:00.000Z",
   "language": "en",
-  "accentColorHex": "#f59e0b",
+  "accentColorHex": "#0891b2",
   "colorPalette": {
-    "primary": "#1e293b",
-    "secondary": "#f59e0b",
-    "background": "#ffffff",
-    "text": "#0f172a"
+    "primary": "#0891b2",
+    "secondary": "#0ea5e9",
+    "background": "#020617",
+    "text": "#f9fafb"
   },
-  "publisherLogoUrl": "",
-  "logoLibrary": [],
+  "publisherLogoUrl": "/logos/cyyder-logo-light.png",
+  "logoLibrary": [
+    "/logos/cyyder-logo-light.png",
+    "/logos/cyyder-logo-dark.png"
+  ],
   "sections": [
     {
-      "id": "section-001",
-      "label": "Cover Story",
-      "title": "The Future of Financial Security",
-      "subtitle": "How AI is reshaping cyber defense in banking",
-      "heroImageUrl": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800",
-      "heroImageAlt": "Digital security concept",
+      "id": "feature-boardroom-cloud",
+      "label": "Feature",
+      "title": "From Boardroom to Cloud Room: Who Owns Financial Resilience?",
+      "subtitle": "Why cyber, IT and business leaders must share one risk language.",
+      "heroImageUrl": "/images/demo/boardroom-resilience.jpg",
+      "heroImageAlt": "Stylised executive boardroom table with digital overlays and shield icons.",
       "heroImageSource": "url",
+      "heroImagePrompt": "Top-down view of a modern executive boardroom table shaped like a shield, with holographic financial and cyber icons.",
       "keyPoints": [
-        "AI-powered threat detection reduces response time by 95%",
-        "Zero-trust architecture becomes industry standard",
-        "Quantum encryption protects against future threats"
+        "Boards are now explicitly accountable for operational resilience, not just cybersecurity.",
+        "Cloud, AI and fintech dependencies create shared risks that no silo can own alone.",
+        "The only way out of the chaos is a common risk language across business, tech and security."
       ],
-      "pullQuote": "The cost of prevention is always less than the cost of recovery.",
-      "statsLine": "Global cybersecurity spending reached $150B in 2024",
-      "bodyMarkdown": "# The Evolution of Cyber Defense\n\nFinancial institutions face unprecedented challenges in protecting customer data and assets. Traditional security measures are no longer sufficient against sophisticated threat actors.\n\n## AI-Driven Security\n\nMachine learning algorithms now monitor billions of transactions per second, identifying anomalies that would be impossible for humans to detect.\n\n## The Human Factor\n\nDespite technological advances, employee training remains the first line of defense. Organizations that invest in security awareness see 70% fewer successful attacks."
+      "pullQuote": "If cyber risk only lives in the CISO slide deck, it is not truly a business risk.",
+      "statsLine": "73% of financial boards receive regular cyber and resilience reporting, but far fewer say they truly understand it.",
+      "bodyMarkdown": "Financial institutions have spent years upgrading tools and running red-team exercises, but regulators and customers now care above all about business disruption, not just \"cyber incidents\".\n\nThis feature reframes cybersecurity as a pillar of financial resilience. Instead of asking \"Are we secure?\", leading organisations ask what must never go down, what they can survive losing, and who owns those trade-offs across the business.\n\nThe goal is a governance model where the board sets resilience appetite, management turns that into concrete recovery targets, and the CISO becomes the guide for digital risk choices rather than the sole owner of \"cyber problems\"."
+    },
+    {
+      "id": "feature-cloud-concentration",
+      "label": "Feature",
+      "title": "When the Same Cloud Fails Everyone: Concentration Risk in 2025",
+      "subtitle": "How to explain multi-cloud, sovereign cloud and exit plans without putting the board to sleep.",
+      "heroImageUrl": "/images/demo/cloud-city-outage.jpg",
+      "heroImageAlt": "Semi-transparent cloud over a financial city skyline with some buildings dimmed by an outage.",
+      "heroImageSource": "url",
+      "heroImagePrompt": "Vertical cover image of a large cloud over a stylised financial district, with some connections dark and others glowing.",
+      "keyPoints": [
+        "Most financial institutions depend on a tiny number of global cloud and SaaS providers.",
+        "Regulators want evidence that you can survive a prolonged outage or serious degradation.",
+        "Resilience is less about zero downtime and more about graceful degradation and tested exit plans."
+      ],
+      "pullQuote": "Your biggest outage this decade might come from a provider you do not control and cannot quickly replace.",
+      "statsLine": "In many markets, more than 60% of financial workloads are concentrated on two or three hyperscale clouds.",
+      "bodyMarkdown": "Cloud concentration risk is no longer an abstract diagram in a regulatory paper. Every new SaaS product, AI copilot and fintech integration quietly increases your dependency on a small set of providers.\n\nThis article breaks concentration risk into three board-friendly questions: where are we really dependent today, how long can critical services survive without that provider, and have we tested any realistic workaround instead of just writing it into a policy.\n\nWe outline options such as multi-region, multi-cloud, sovereign cloud, warm stand-by and manual fallback, explaining in plain language what each one costs in money, complexity and response time."
+    },
+    {
+      "id": "column-ai-copilots",
+      "label": "Column",
+      "title": "AI Copilots at the Edge of Money: Help, Hype and Human Risk",
+      "subtitle": "Before you enable AI everywhere in your bank, fix these three very human problems.",
+      "heroImageUrl": "/images/demo/ai-copilot-banking.jpg",
+      "heroImageAlt": "Person using a banking app on a phone with a friendly AI avatar and a dark shadow figure competing over the screen.",
+      "heroImageSource": "url",
+      "heroImagePrompt": "Cinematic split-scene of an AI copilot protecting a banking app from a glitchy shadow attacker.",
+      "keyPoints": [
+        "AI copilots can reduce alert fatigue and speed up investigations, but can also scale bad decisions.",
+        "The real risk is untrained staff treating AI output as truth instead of one input.",
+        "Simple guardrails and awareness campaigns remain your best defence."
+      ],
+      "pullQuote": "AI does not remove human error – it accelerates whoever is holding the steering wheel.",
+      "statsLine": "Early adopters report investigation times dropping when copilots are used with clear playbooks and logging.",
+      "bodyMarkdown": "Everyone wants an AI copilot now – for analysts, relationship managers, compliance and even board members. The promise is faster insight and fewer clicks.\n\nBut copilots sit in the messy middle between data, models and human judgement. If you drop them into production without training and guardrails, you mainly accelerate confusion and overconfidence.\n\nThis column suggests three steps before you roll out AI at the edge of money: define allowed use cases where AI can suggest but humans must decide, log and review prompts as operational data, and teach short, scenario-based \"AI street smarts\" instead of long policies no one reads."
+    },
+    {
+      "id": "column-ciso-90-days",
+      "label": "Playbook",
+      "title": "Your First 90 Days as a Financial CISO: Resilience Fast-Track",
+      "subtitle": "A pragmatic roadmap for new CISOs walking into regulated chaos.",
+      "heroImageUrl": "/images/demo/ciso-roadmap.jpg",
+      "heroImageAlt": "Abstract road map with milestones leading to a secure digital vault icon.",
+      "heroImageSource": "url",
+      "heroImagePrompt": "Isometric roadmap with milestones leading toward a glowing digital vault, representing a CISO plan.",
+      "keyPoints": [
+        "Stop trying to fix everything – align early with business-critical services and regulatory deadlines.",
+        "Build a simple, trusted view of top risks and current resilience posture.",
+        "Win one or two visible quick victories that matter to the business, not just to your tool stack."
+      ],
+      "pullQuote": "In your first 90 days, your real job is not deploying controls – it is earning the right to be heard.",
+      "statsLine": "Most new CISOs drown in projects; the successful ones focus on a small set of business-critical capabilities.",
+      "bodyMarkdown": "Walking into a new CISO role in a financial institution can feel like being handed the keys to a speeding taxi in a storm: projects everywhere, regulators calling and a board asking if the organisation is safe.\n\nThis playbook treats the first 90 days as a resilience discovery sprint. Weeks 1–3 focus on mapping business-critical services, recent incidents and hard regulatory dates. Weeks 4–6 build a one-page view of the current resilience posture – people, process, technology and suppliers. Weeks 7–12 deliver one or two high-impact, low-drama initiatives that reduce real risk and demonstrate traction.\n\nYou will not fix everything in three months, but you can create clarity, momentum and a shared language for digital resilience."
     }
   ]
 }
