@@ -16,7 +16,7 @@ export const CoverPreview = ({ magazine }: CoverPreviewProps) => {
 
   return (
     <Card
-      className="w-full aspect-[2/3] overflow-hidden shadow-2xl"
+      className="w-full aspect-[210/297] overflow-hidden shadow-2xl"
       style={{
         backgroundColor: palette.primary,
         color: palette.background,
