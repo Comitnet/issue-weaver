@@ -15,48 +15,48 @@ export const ContentsPagePreview = ({ magazine }: ContentsPagePreviewProps) => {
 
   return (
     <Card
-      className="w-full aspect-[210/297] overflow-hidden shadow-2xl"
+      className="w-full aspect-[210/297] overflow-hidden shadow-2xl print:shadow-none"
       style={{ backgroundColor: palette.background, color: palette.text }}
     >
-      <div className="h-full flex flex-col p-8">
-        <div className="mb-6">
+      <div className="h-full flex flex-col p-12">
+        <div className="mb-8">
           <h2
-            className="text-3xl font-bold mb-2"
+            className="text-5xl font-bold mb-4"
             style={{ color: palette.primary }}
           >
             Contents
           </h2>
           <div
-            className="w-12 h-1 rounded-full"
+            className="w-20 h-1.5 rounded-full"
             style={{ backgroundColor: palette.secondary }}
           />
         </div>
 
-        <div className="space-y-4 flex-1">
+        <div className="space-y-6 flex-1">
           {magazine.sections.map((section, index) => (
             <div 
               key={section.id} 
-              className="flex gap-4 items-start pb-4 border-b-2" 
-              style={{ borderColor: palette.primary, opacity: 0.2 }}
+              className="flex gap-5 items-start pb-4 border-b" 
+              style={{ borderColor: `${palette.primary}25` }}
             >
               <span
-                className="text-2xl font-bold flex-shrink-0"
-                style={{ color: palette.secondary }}
+                className="text-3xl font-bold flex-shrink-0 leading-none"
+                style={{ color: palette.primary }}
               >
                 {String(index + 2).padStart(2, "0")}
               </span>
               <div className="flex-1 min-w-0">
                 <p
-                  className="text-xs uppercase tracking-wider mb-1.5 font-bold"
+                  className="text-xs uppercase tracking-widest mb-2 font-bold"
                   style={{ color: palette.secondary }}
                 >
                   {section.label}
                 </p>
-                <p className="font-bold text-lg leading-tight mb-1" style={{ color: palette.primary }}>
+                <h3 className="font-bold text-xl leading-tight mb-1.5" style={{ color: palette.text }}>
                   {section.title}
-                </p>
+                </h3>
                 {section.subtitle && (
-                  <p className="text-sm" style={{ color: palette.text, opacity: 0.8 }}>
+                  <p className="text-base leading-snug" style={{ color: palette.secondary, opacity: 0.9 }}>
                     {section.subtitle}
                   </p>
                 )}

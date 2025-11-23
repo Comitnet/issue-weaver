@@ -5,9 +5,9 @@ export interface ColorPalette {
   text: string;
 }
 
-export type HeroImagePosition = "top" | "middle" | "bottom";
+export type HeroImagePlacement = "top" | "middle" | "bottom";
+export type HeroImageAlignment = "left" | "center" | "right";
 export type HeroImageSize = "small" | "medium" | "large";
-export type HeroImageAlign = "left" | "center" | "right";
 
 export interface Section {
   id: string;
@@ -18,9 +18,10 @@ export interface Section {
   heroImageAlt?: string;
   heroImageSource?: "upload" | "ai" | "url";
   heroImagePrompt?: string;
-  heroImagePosition?: HeroImagePosition;
+  heroImagePlacement?: HeroImagePlacement;
+  heroImageAlignment?: HeroImageAlignment;
   heroImageSize?: HeroImageSize;
-  heroImageAlign?: HeroImageAlign;
+  wrapTextAroundImage?: boolean;
   keyPoints: string[];
   pullQuote?: string;
   statsLine?: string;
