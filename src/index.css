@@ -114,3 +114,58 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Print styles for PDF export */
+@media print {
+  /* Hide elements that shouldn't be printed */
+  .print-hide {
+    display: none !important;
+  }
+
+  /* Remove page margins and backgrounds */
+  @page {
+    margin: 0;
+    size: A4 portrait;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Ensure each magazine page starts on a new print page */
+  .print-page {
+    page-break-after: always;
+    page-break-inside: avoid;
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Last page shouldn't have a page break after */
+  .print-page:last-child {
+    page-break-after: auto;
+  }
+
+  /* Ensure content fits properly */
+  .print-container {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Force print colors */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}
+
+/* Screen view styles for print preview */
+@media screen {
+  .print-page {
+    width: 100%;
+    max-width: 210mm;
+  }
+}
