@@ -5,6 +5,10 @@ export interface ColorPalette {
   text: string;
 }
 
+export type HeroImagePosition = "top" | "middle" | "bottom";
+export type HeroImageSize = "small" | "medium" | "large";
+export type HeroImageAlign = "left" | "center" | "right";
+
 export interface Section {
   id: string;
   label: string;
@@ -14,12 +18,17 @@ export interface Section {
   heroImageAlt?: string;
   heroImageSource?: "upload" | "ai" | "url";
   heroImagePrompt?: string;
+  heroImagePosition?: HeroImagePosition;
+  heroImageSize?: HeroImageSize;
+  heroImageAlign?: HeroImageAlign;
   keyPoints: string[];
   pullQuote?: string;
   statsLine?: string;
   bodyMarkdown: string;
   showOnCover?: boolean;
 }
+
+export type CoverImageStyle = "none" | "full-bleed" | "banner";
 
 export interface Magazine {
   id: string;
@@ -39,6 +48,8 @@ export interface Magazine {
   colorPalette?: ColorPalette;
   publisherLogoUrl?: string;
   logoLibrary?: string[];
+  coverImageUrl?: string;
+  coverImageStyle?: CoverImageStyle;
   sections: Section[];
 }
 

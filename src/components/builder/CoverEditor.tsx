@@ -122,6 +122,61 @@ export const CoverEditor = ({ magazine, onUpdate }: CoverEditorProps) => {
         </Card>
 
         <Card className="p-4 space-y-4">
+          <h3 className="font-semibold">Cover Background</h3>
+          
+          <div className="space-y-2">
+            <Label htmlFor="cover-image-url">Cover Background Image URL</Label>
+            <Input
+              id="cover-image-url"
+              type="url"
+              value={magazine.coverImageUrl || ""}
+              onChange={(e) => onUpdate({ coverImageUrl: e.target.value })}
+              placeholder="https://example.com/cover.jpg"
+              maxLength={500}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Cover Image Style</Label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="coverImageStyle"
+                  value="none"
+                  checked={(magazine.coverImageStyle || "none") === "none"}
+                  onChange={(e) => onUpdate({ coverImageStyle: e.target.value as any })}
+                  className="cursor-pointer"
+                />
+                <span className="text-sm">None</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="coverImageStyle"
+                  value="full-bleed"
+                  checked={magazine.coverImageStyle === "full-bleed"}
+                  onChange={(e) => onUpdate({ coverImageStyle: e.target.value as any })}
+                  className="cursor-pointer"
+                />
+                <span className="text-sm">Full-bleed</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="coverImageStyle"
+                  value="banner"
+                  checked={magazine.coverImageStyle === "banner"}
+                  onChange={(e) => onUpdate({ coverImageStyle: e.target.value as any })}
+                  className="cursor-pointer"
+                />
+                <span className="text-sm">Banner</span>
+              </label>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-4 space-y-4">
           <h3 className="font-semibold">Publisher</h3>
           
           <div className="space-y-2">

@@ -14,25 +14,68 @@ export const SectionPagePreview = ({ magazine, section }: SectionPagePreviewProp
     text: "#0f172a",
   };
 
+  const position = section.heroImagePosition || "top";
+  const size = section.heroImageSize || "medium";
+  const align = section.heroImageAlign || "center";
+
+  const getSizeClass = () => {
+    if (size === "small") return "w-48 h-32";
+    if (size === "large") return "w-96 h-64";
+    return "w-72 h-48"; // medium
+  };
+
+  const getAlignClass = () => {
+    if (align === "left") return "float-left mr-4 mb-2";
+    if (align === "right") return "float-right ml-4 mb-2";
+    return "mx-auto block mb-4";
+  };
+
+  const renderImage = () => {
+    if (!section.heroImageUrl) return null;
+
+    if (position === "top") {
+      return (
+        <div className="w-full h-[40%] overflow-hidden">
+          <img
+            src={section.heroImageUrl}
+            alt={section.heroImageAlt || section.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      );
+    }
+
+    if (position === "bottom") {
+      return (
+        <div className="w-full h-[35%] overflow-hidden mt-4">
+          <img
+            src={section.heroImageUrl}
+            alt={section.heroImageAlt || section.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      );
+    }
+
+    // Middle position with wrapping
+    return (
+      <img
+        src={section.heroImageUrl}
+        alt={section.heroImageAlt || section.title}
+        className={`${getSizeClass()} ${getAlignClass()} object-cover rounded`}
+      />
+    );
+  };
+
   return (
     <Card
-      className="w-full aspect-[210/297] overflow-hidden shadow-2xl"
+      className="w-full aspect-[210/297] overflow-hidden shadow-2xl print:shadow-none"
       style={{ backgroundColor: palette.background }}
     >
       <div className="h-full flex flex-col">
-        {/* Hero Image */}
-        {section.heroImageUrl && (
-          <div className="h-[40%] w-full overflow-hidden">
-            <img
-              src={section.heroImageUrl}
-              alt={section.heroImageAlt || section.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
+        {position === "top" && renderImage()}
         
-        {/* Content */}
-        <div className="flex-1 p-6 overflow-y-auto">
+        <div className="flex-1 p-6 overflow-hidden">
           <div
             className="text-[10px] uppercase tracking-wider font-semibold mb-2"
             style={{ color: palette.secondary }}
@@ -61,6 +104,8 @@ export const SectionPagePreview = ({ magazine, section }: SectionPagePreviewProp
               "{section.pullQuote}"
             </div>
           )}
+
+          {position === "middle" && renderImage()}
           
           <div className="prose prose-sm max-w-none" style={{ color: palette.text }}>
             {section.bodyMarkdown.split('\n\n').map((paragraph, idx) => (
@@ -88,6 +133,8 @@ export const SectionPagePreview = ({ magazine, section }: SectionPagePreviewProp
               </ul>
             </div>
           )}
+
+          {position === "bottom" && renderImage()}
         </div>
       </div>
     </Card>
