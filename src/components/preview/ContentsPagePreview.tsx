@@ -32,27 +32,33 @@ export const ContentsPagePreview = ({ magazine }: ContentsPagePreviewProps) => {
           />
         </div>
 
-        <div className="space-y-4 flex-1 overflow-y-auto">
+        <div className="space-y-4 flex-1">
           {magazine.sections.map((section, index) => (
-            <div key={section.id} className="flex gap-4 items-start pb-3 border-b" style={{ borderColor: palette.text, opacity: 0.1 }}>
+            <div 
+              key={section.id} 
+              className="flex gap-4 items-start pb-4 border-b-2" 
+              style={{ borderColor: palette.primary, opacity: 0.2 }}
+            >
               <span
-                className="text-xl font-bold flex-shrink-0"
+                className="text-2xl font-bold flex-shrink-0"
                 style={{ color: palette.secondary }}
               >
                 {String(index + 2).padStart(2, "0")}
               </span>
               <div className="flex-1 min-w-0">
                 <p
-                  className="text-[10px] uppercase tracking-wider mb-1 font-semibold"
+                  className="text-xs uppercase tracking-wider mb-1.5 font-bold"
                   style={{ color: palette.secondary }}
                 >
                   {section.label}
                 </p>
-                <p className="font-bold text-base leading-tight mb-1" style={{ color: palette.primary }}>
+                <p className="font-bold text-lg leading-tight mb-1" style={{ color: palette.primary }}>
                   {section.title}
                 </p>
                 {section.subtitle && (
-                  <p className="text-xs opacity-70">{section.subtitle}</p>
+                  <p className="text-sm" style={{ color: palette.text, opacity: 0.8 }}>
+                    {section.subtitle}
+                  </p>
                 )}
               </div>
             </div>

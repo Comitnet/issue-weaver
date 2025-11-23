@@ -69,20 +69,20 @@ const Print = () => {
       </header>
 
       {/* Magazine pages */}
-      <div className="print-container py-8 px-4">
+      <div className="print-container py-8 px-4 space-y-8">
         {/* Cover Page */}
-        <div className="print-page mx-auto mb-8">
+        <div className="print-page mx-auto">
           <CoverPreview magazine={magazine} />
         </div>
 
         {/* Contents Page */}
-        <div className="print-page mx-auto mb-8">
+        <div className="print-page mx-auto">
           <ContentsPagePreview magazine={magazine} />
         </div>
 
         {/* Section Pages */}
         {magazine.sections.map((section) => (
-          <div key={section.id} className="print-page mx-auto mb-8">
+          <div key={section.id} className="print-page mx-auto">
             <SectionPagePreview magazine={magazine} section={section} />
           </div>
         ))}
