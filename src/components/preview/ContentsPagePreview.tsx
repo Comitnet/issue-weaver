@@ -18,41 +18,41 @@ export const ContentsPagePreview = ({ magazine }: ContentsPagePreviewProps) => {
       className="w-full aspect-[210/297] overflow-hidden shadow-2xl"
       style={{ backgroundColor: palette.background, color: palette.text }}
     >
-      <div className="h-full flex flex-col p-12">
-        <div className="mb-8">
+      <div className="h-full flex flex-col p-8">
+        <div className="mb-6">
           <h2
-            className="text-4xl font-bold mb-3"
+            className="text-3xl font-bold mb-2"
             style={{ color: palette.primary }}
           >
             Contents
           </h2>
           <div
-            className="w-16 h-1.5 rounded-full"
+            className="w-12 h-1 rounded-full"
             style={{ backgroundColor: palette.secondary }}
           />
         </div>
 
-        <div className="space-y-6 flex-1 overflow-y-auto">
+        <div className="space-y-4 flex-1 overflow-y-auto">
           {magazine.sections.map((section, index) => (
-            <div key={section.id} className="flex gap-6 items-start pb-4 border-b" style={{ borderColor: palette.text, opacity: 0.1 }}>
+            <div key={section.id} className="flex gap-4 items-start pb-3 border-b" style={{ borderColor: palette.text, opacity: 0.1 }}>
               <span
-                className="text-2xl font-bold flex-shrink-0"
+                className="text-xl font-bold flex-shrink-0"
                 style={{ color: palette.secondary }}
               >
                 {String(index + 2).padStart(2, "0")}
               </span>
               <div className="flex-1 min-w-0">
                 <p
-                  className="text-xs uppercase tracking-wider mb-2 font-semibold"
+                  className="text-[10px] uppercase tracking-wider mb-1 font-semibold"
                   style={{ color: palette.secondary }}
                 >
                   {section.label}
                 </p>
-                <p className="font-bold text-lg leading-tight mb-1" style={{ color: palette.primary }}>
+                <p className="font-bold text-base leading-tight mb-1" style={{ color: palette.primary }}>
                   {section.title}
                 </p>
                 {section.subtitle && (
-                  <p className="text-sm opacity-70">{section.subtitle}</p>
+                  <p className="text-xs opacity-70">{section.subtitle}</p>
                 )}
               </div>
             </div>
