@@ -100,15 +100,15 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
             </div>
 
             <div>
-              <Label>Position</Label>
+              <Label>Placement</Label>
               <div className="flex gap-3">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
-                    name={`position-${section.id}`}
+                    name={`placement-${section.id}`}
                     value="top"
-                    checked={(section.heroImagePosition || "top") === "top"}
-                    onChange={(e) => onUpdate({ heroImagePosition: e.target.value as any })}
+                    checked={(section.heroImagePlacement || "top") === "top"}
+                    onChange={(e) => onUpdate({ heroImagePlacement: e.target.value as any })}
                     className="cursor-pointer"
                   />
                   <span className="text-sm">Top</span>
@@ -116,10 +116,10 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
-                    name={`position-${section.id}`}
+                    name={`placement-${section.id}`}
                     value="middle"
-                    checked={section.heroImagePosition === "middle"}
-                    onChange={(e) => onUpdate({ heroImagePosition: e.target.value as any })}
+                    checked={section.heroImagePlacement === "middle"}
+                    onChange={(e) => onUpdate({ heroImagePlacement: e.target.value as any })}
                     className="cursor-pointer"
                   />
                   <span className="text-sm">Middle</span>
@@ -127,10 +127,10 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
-                    name={`position-${section.id}`}
+                    name={`placement-${section.id}`}
                     value="bottom"
-                    checked={section.heroImagePosition === "bottom"}
-                    onChange={(e) => onUpdate({ heroImagePosition: e.target.value as any })}
+                    checked={section.heroImagePlacement === "bottom"}
+                    onChange={(e) => onUpdate({ heroImagePlacement: e.target.value as any })}
                     className="cursor-pointer"
                   />
                   <span className="text-sm">Bottom</span>
@@ -138,7 +138,7 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
               </div>
             </div>
 
-            {section.heroImagePosition === "middle" && (
+            {section.heroImagePlacement === "middle" && (
               <>
                 <div>
                   <Label>Size</Label>
@@ -180,15 +180,15 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
                 </div>
 
                 <div>
-                  <Label>Align</Label>
+                  <Label>Alignment</Label>
                   <div className="flex gap-3">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="radio"
-                        name={`align-${section.id}`}
+                        name={`alignment-${section.id}`}
                         value="left"
-                        checked={(section.heroImageAlign || "center") === "left"}
-                        onChange={(e) => onUpdate({ heroImageAlign: e.target.value as any })}
+                        checked={(section.heroImageAlignment || "center") === "left"}
+                        onChange={(e) => onUpdate({ heroImageAlignment: e.target.value as any })}
                         className="cursor-pointer"
                       />
                       <span className="text-sm">Left</span>
@@ -196,10 +196,10 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="radio"
-                        name={`align-${section.id}`}
+                        name={`alignment-${section.id}`}
                         value="center"
-                        checked={(section.heroImageAlign || "center") === "center"}
-                        onChange={(e) => onUpdate({ heroImageAlign: e.target.value as any })}
+                        checked={(section.heroImageAlignment || "center") === "center"}
+                        onChange={(e) => onUpdate({ heroImageAlignment: e.target.value as any })}
                         className="cursor-pointer"
                       />
                       <span className="text-sm">Center</span>
@@ -207,15 +207,26 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="radio"
-                        name={`align-${section.id}`}
+                        name={`alignment-${section.id}`}
                         value="right"
-                        checked={section.heroImageAlign === "right"}
-                        onChange={(e) => onUpdate({ heroImageAlign: e.target.value as any })}
+                        checked={section.heroImageAlignment === "right"}
+                        onChange={(e) => onUpdate({ heroImageAlignment: e.target.value as any })}
                         className="cursor-pointer"
                       />
                       <span className="text-sm">Right</span>
                     </label>
                   </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`wrapText-${section.id}`}
+                    checked={section.wrapTextAroundImage || false}
+                    onCheckedChange={(checked) => onUpdate({ wrapTextAroundImage: checked as boolean })}
+                  />
+                  <Label htmlFor={`wrapText-${section.id}`} className="cursor-pointer text-sm">
+                    Wrap text around this image
+                  </Label>
                 </div>
               </>
             )}

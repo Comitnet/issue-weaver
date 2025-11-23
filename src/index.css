@@ -135,17 +135,28 @@ All colors MUST be HSL.
 
   /* Ensure each magazine page starts on a new print page */
   .print-page {
-    page-break-after: always;
-    page-break-inside: avoid;
+    page-break-before: always;
+    page-break-inside: auto;
     width: 210mm;
-    height: 297mm;
+    min-height: 297mm;
     margin: 0;
     padding: 0;
   }
 
+  /* First page shouldn't have a page break before */
+  .print-page:first-child {
+    page-break-before: auto;
+  }
+  
   /* Last page shouldn't have a page break after */
   .print-page:last-child {
     page-break-after: auto;
+  }
+  
+  /* Allow content to flow naturally */
+  .print-page > * {
+    max-height: none !important;
+    overflow: visible !important;
   }
 
   /* Ensure content fits properly */

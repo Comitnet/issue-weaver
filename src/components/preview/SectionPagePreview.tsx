@@ -14,117 +14,134 @@ export const SectionPagePreview = ({ magazine, section }: SectionPagePreviewProp
     text: "#0f172a",
   };
 
-  const position = section.heroImagePosition || "top";
+  const placement = section.heroImagePlacement || "top";
   const size = section.heroImageSize || "medium";
-  const align = section.heroImageAlign || "center";
+  const alignment = section.heroImageAlignment || "center";
+  const wrapText = section.wrapTextAroundImage || false;
 
-  const getSizeClass = () => {
-    if (size === "small") return "w-48 h-32";
-    if (size === "large") return "w-96 h-64";
-    return "w-72 h-48"; // medium
+  const getSizeStyles = () => {
+    if (size === "small") return { width: "30%", minWidth: "200px" };
+    if (size === "large") return { width: "65%", minWidth: "400px" };
+    return { width: "45%", minWidth: "300px" }; // medium
   };
 
-  const getAlignClass = () => {
-    if (align === "left") return "float-left mr-4 mb-2";
-    if (align === "right") return "float-right ml-4 mb-2";
-    return "mx-auto block mb-4";
+  const getFloatStyles = () => {
+    const baseStyles = getSizeStyles();
+    if (placement !== "middle" || !wrapText) {
+      return { ...baseStyles, display: "block", margin: "0 auto 1rem auto" };
+    }
+    
+    if (alignment === "left") {
+      return { ...baseStyles, float: "left" as const, marginRight: "1.5rem", marginBottom: "1rem" };
+    }
+    if (alignment === "right") {
+      return { ...baseStyles, float: "right" as const, marginLeft: "1.5rem", marginBottom: "1rem" };
+    }
+    return { ...baseStyles, display: "block", margin: "0 auto 1rem auto" };
   };
 
-  const renderImage = () => {
-    if (!section.heroImageUrl) return null;
+  const renderTopImage = () => {
+    if (!section.heroImageUrl || placement !== "top") return null;
+    return (
+      <div className="w-full h-[40%] overflow-hidden print:page-break-inside-avoid">
+        <img
+          src={section.heroImageUrl}
+          alt={section.heroImageAlt || section.title}
+          className="w-full h-full object-cover"
+        />
+      </div>
+    );
+  };
 
-    if (position === "top") {
-      return (
-        <div className="w-full h-[40%] overflow-hidden">
-          <img
-            src={section.heroImageUrl}
-            alt={section.heroImageAlt || section.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      );
-    }
+  const renderBottomImage = () => {
+    if (!section.heroImageUrl || placement !== "bottom") return null;
+    return (
+      <div className="w-full mt-6 print:page-break-inside-avoid">
+        <img
+          src={section.heroImageUrl}
+          alt={section.heroImageAlt || section.title}
+          className="w-full h-auto max-h-[300px] object-cover"
+        />
+      </div>
+    );
+  };
 
-    if (position === "bottom") {
-      return (
-        <div className="w-full h-[35%] overflow-hidden mt-4">
-          <img
-            src={section.heroImageUrl}
-            alt={section.heroImageAlt || section.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      );
-    }
-
-    // Middle position with wrapping
+  const renderMiddleImage = () => {
+    if (!section.heroImageUrl || placement !== "middle") return null;
+    const styles = getFloatStyles();
     return (
       <img
         src={section.heroImageUrl}
         alt={section.heroImageAlt || section.title}
-        className={`${getSizeClass()} ${getAlignClass()} object-cover rounded`}
+        style={styles}
+        className="object-cover rounded print:page-break-inside-avoid"
       />
     );
   };
 
+  // Split paragraphs for middle placement
+  const paragraphs = section.bodyMarkdown.split('\n\n').filter(p => p.trim());
+  const insertImageAfter = placement === "middle" ? Math.min(1, Math.floor(paragraphs.length / 3)) : -1;
+
   return (
     <Card
-      className="w-full aspect-[210/297] overflow-hidden shadow-2xl print:shadow-none"
+      className="w-full aspect-[210/297] overflow-visible shadow-2xl print:shadow-none print:overflow-visible"
       style={{ backgroundColor: palette.background }}
     >
-      <div className="h-full flex flex-col">
-        {position === "top" && renderImage()}
+      <div className="h-full flex flex-col print:h-auto print:min-h-full">
+        {renderTopImage()}
         
-        <div className="flex-1 p-6 overflow-hidden">
+        <div className="flex-1 p-8 print:p-12 print:overflow-visible">
           <div
-            className="text-[10px] uppercase tracking-wider font-semibold mb-2"
+            className="text-xs uppercase tracking-widest font-bold mb-3"
             style={{ color: palette.secondary }}
           >
             {section.label}
           </div>
           
           <h1
-            className="text-2xl font-bold mb-2 leading-tight"
+            className="text-3xl font-bold mb-3 leading-tight print:text-4xl"
             style={{ color: palette.primary }}
           >
             {section.title}
           </h1>
           
           {section.subtitle && (
-            <p className="text-sm mb-3" style={{ color: palette.text, opacity: 0.8 }}>
+            <p className="text-base mb-4 print:text-lg" style={{ color: palette.text, opacity: 0.85 }}>
               {section.subtitle}
             </p>
           )}
 
           {section.pullQuote && (
             <div
-              className="my-4 pl-3 border-l-4 italic text-base"
+              className="my-6 pl-4 border-l-4 italic text-lg print:text-xl print:my-8"
               style={{ borderColor: palette.secondary, color: palette.primary }}
             >
               "{section.pullQuote}"
             </div>
           )}
-
-          {position === "middle" && renderImage()}
           
-          <div className="prose prose-sm max-w-none" style={{ color: palette.text }}>
-            {section.bodyMarkdown.split('\n\n').map((paragraph, idx) => (
-              <p key={idx} className="mb-2 leading-relaxed text-xs">
-                {paragraph.replace(/[#*_]/g, "")}
-              </p>
+          <div className="prose prose-sm max-w-none print:prose-base" style={{ color: palette.text }}>
+            {paragraphs.map((paragraph, idx) => (
+              <div key={idx}>
+                {idx === insertImageAfter && renderMiddleImage()}
+                <p className="mb-3 leading-relaxed text-sm print:text-base print:mb-4 print:leading-relaxed">
+                  {paragraph.replace(/[#*_]/g, "")}
+                </p>
+              </div>
             ))}
           </div>
 
           {section.keyPoints.length > 0 && (
-            <div className="mt-4">
-              <h3 className="text-xs font-bold mb-2" style={{ color: palette.primary }}>
+            <div className="mt-6 print:mt-8 clear-both">
+              <h3 className="text-sm font-bold mb-3 print:text-base" style={{ color: palette.primary }}>
                 Key Points
               </h3>
-              <ul className="space-y-1.5">
+              <ul className="space-y-2">
                 {section.keyPoints.map((point, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs">
+                  <li key={idx} className="flex items-start gap-3 text-sm print:text-base">
                     <span
-                      className="w-1 h-1 rounded-full mt-1.5 flex-shrink-0"
+                      className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
                       style={{ backgroundColor: palette.secondary }}
                     />
                     <span style={{ color: palette.text }}>{point}</span>
@@ -134,7 +151,7 @@ export const SectionPagePreview = ({ magazine, section }: SectionPagePreviewProp
             </div>
           )}
 
-          {position === "bottom" && renderImage()}
+          {renderBottomImage()}
         </div>
       </div>
     </Card>
