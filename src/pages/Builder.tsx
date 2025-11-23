@@ -100,11 +100,11 @@ const Builder = () => {
   };
 
   const handleExportPDF = () => {
-    // Stub for PDF export
     toast({ 
-      title: "PDF Export (Coming Soon)", 
-      description: "This feature will be implemented with Lovable Cloud backend" 
+      title: "PDF Export Ready", 
+      description: "Use your browser's print function (Ctrl/Cmd+P) and select 'Save as PDF' for best results"
     });
+    window.print();
   };
 
   const handleSettings = () => {

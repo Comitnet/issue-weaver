@@ -52,13 +52,13 @@ export const CoverPreview = ({ magazine }: CoverPreviewProps) => {
         </div>
 
         {/* Main Title */}
-        <div className="space-y-3">
-          <h1 className="text-4xl font-bold leading-tight">{magazine.title}</h1>
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold leading-tight">{magazine.title}</h1>
           {magazine.subtitle && (
-            <p className="text-lg opacity-90">{magazine.subtitle}</p>
+            <p className="text-base opacity-90">{magazine.subtitle}</p>
           )}
           {magazine.tagline && (
-            <p className="text-sm uppercase tracking-wide opacity-70">{magazine.tagline}</p>
+            <p className="text-xs uppercase tracking-wide opacity-70">{magazine.tagline}</p>
           )}
         </div>
 

@@ -66,7 +66,7 @@ export const PreviewPanel = ({ magazine }: PreviewPanelProps) => {
       </div>
       
       <div className="flex-1 flex justify-center items-start">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-lg">
           {renderPage()}
         </div>
       </div>
