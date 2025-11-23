@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMagazine } from "@/hooks/useMagazine";
 import { Section } from "@/types/magazine";
 import { BuilderHeader } from "@/components/builder/BuilderHeader";
@@ -10,6 +11,7 @@ import { MagazineSettingsDialog } from "@/components/builder/MagazineSettingsDia
 import { toast } from "@/hooks/use-toast";
 
 const Builder = () => {
+  const navigate = useNavigate();
   const { magazine, updateMagazine, resetMagazine, importMagazine, exportMagazine } = useMagazine();
   const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(
     magazine.sections[0]?.id
@@ -100,11 +102,7 @@ const Builder = () => {
   };
 
   const handleExportPDF = () => {
-    toast({ 
-      title: "PDF Export Ready", 
-      description: "Use your browser's print function (Ctrl/Cmd+P) and select 'Save as PDF' for best results"
-    });
-    window.print();
+    navigate('/print', { state: { magazine } });
   };
 
   const handleSettings = () => {
