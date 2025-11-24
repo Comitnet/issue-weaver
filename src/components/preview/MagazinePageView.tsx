@@ -374,6 +374,38 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
             ))}
           </div>
 
+          {/* Key Points - only on first page */}
+          {isFirstPage && section.keyPoints && section.keyPoints.length > 0 && (
+            <div className="mt-6 p-4 rounded-lg border-l-4" style={{ 
+              backgroundColor: `${palette.primary}08`,
+              borderColor: palette.secondary 
+            }}>
+              <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: palette.primary }}>
+                Key Points
+              </h3>
+              <ul className="space-y-2">
+                {section.keyPoints.map((point, idx) => (
+                  <li key={idx} className="text-sm flex items-start gap-2">
+                    <span style={{ color: palette.secondary }}>•</span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Pull Quote - only on first page */}
+          {isFirstPage && section.pullQuote && (
+            <div className="mt-6 p-6 border-l-4" style={{ 
+              backgroundColor: `${palette.secondary}10`,
+              borderColor: palette.primary 
+            }}>
+              <p className="text-lg italic font-medium leading-relaxed" style={{ color: palette.text }}>
+                "{section.pullQuote}"
+              </p>
+            </div>
+          )}
+
           {/* Bottom image */}
           {renderImage("bottom")}
         </div>
