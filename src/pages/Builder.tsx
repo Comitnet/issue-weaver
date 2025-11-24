@@ -9,6 +9,7 @@ import { CoverEditor } from "@/components/builder/CoverEditor";
 import { PreviewPanel } from "@/components/preview/PreviewPanel";
 import { MagazineSettingsDialog } from "@/components/builder/MagazineSettingsDialog";
 import { toast } from "@/hooks/use-toast";
+import { exportMagazineAsDocx } from "@/lib/exportDocx";
 
 const Builder = () => {
   const navigate = useNavigate();
@@ -105,6 +106,21 @@ const Builder = () => {
     navigate('/print', { state: { magazine } });
   };
 
+  const handleExportDocx = async () => {
+    try {
+      const blob = await exportMagazineAsDocx(magazine);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${magazine.title.replace(/\s+/g, "-").toLowerCase()}-${magazine.issueNumber}.docx`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: "DOCX exported successfully" });
+    } catch (error) {
+      toast({ title: "Export failed", description: "Could not export DOCX", variant: "destructive" });
+    }
+  };
+
   const handleSettings = () => {
     setSettingsOpen(true);
   };
@@ -129,6 +145,7 @@ const Builder = () => {
         onExportJSON={handleExportJSON}
         onImportJSON={handleImportJSON}
         onExportPDF={handleExportPDF}
+        onExportDocx={handleExportDocx}
         onSettings={handleSettings}
         onShare={handleShare}
       />
