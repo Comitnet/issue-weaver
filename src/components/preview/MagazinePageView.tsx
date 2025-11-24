@@ -366,9 +366,9 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
           {isFirstPage && renderImage("top")}
 
           {/* Body text with columns */}
-          <div className={`flex-1 text-base leading-relaxed ${columnClass}`}>
+          <div className={`flex-1 text-base leading-relaxed ${columnClass} overflow-visible`}>
             {paragraphs.map((para, idx) => (
-              <p key={idx} className="mb-4 break-inside-avoid">
+              <p key={idx} className="mb-4 break-inside-avoid text-justify">
                 {para}
               </p>
             ))}
