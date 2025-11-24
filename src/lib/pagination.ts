@@ -19,6 +19,7 @@ export interface MagazinePage {
 }
 
 const MAX_CHARS_PER_PAGE = 3000;
+const FIRST_PAGE_OVERHEAD = 800; // Reserve space for Key Points, Pull Quote, etc.
 
 export function paginateMagazine(magazine: Magazine): MagazinePage[] {
   const pages: MagazinePage[] = [];
@@ -109,7 +110,14 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
     for (const para of paragraphs) {
       const paraLength = para.length;
       const newCount = currentCharCount + paraLength + 2;
-      const wouldOverflow = newCount > MAX_CHARS_PER_PAGE;
+      
+      // On first page, reserve space for Key Points and Pull Quote
+      const hasExtraContent = section.keyPoints?.length || section.pullQuote;
+      const pageLimit = pageWithinSection === 0 && hasExtraContent 
+        ? MAX_CHARS_PER_PAGE - FIRST_PAGE_OVERHEAD 
+        : MAX_CHARS_PER_PAGE;
+      
+      const wouldOverflow = newCount > pageLimit;
 
       // Break page only if we would overflow AND we have at least one paragraph
       if (wouldOverflow && currentPageParagraphs.length > 0) {
