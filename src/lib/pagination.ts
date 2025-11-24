@@ -1,22 +1,21 @@
 import { Magazine, Section } from "@/types/magazine";
 
-export type PageType = "cover" | "contents" | "article";
+export type PageKind = "cover" | "contents" | "article";
 
 export interface ArticlePageBlock {
   sectionId: string;
   sectionLabel: string;
   sectionTitle: string;
   section: Section;
+  isContinuation: boolean;
   paragraphs: string[];
-  isFirstPage: boolean;
-  isLastPage: boolean;
   pageWithinSection: number;
 }
 
 export interface MagazinePage {
-  type: PageType;
-  pageNumber: number;
-  articleBlock?: ArticlePageBlock;
+  index: number;
+  kind: PageKind;
+  article?: ArticlePageBlock;
 }
 
 const MAX_CHARS_PER_PAGE = 1400;
@@ -24,35 +23,34 @@ const MIN_PARAGRAPHS_PER_PAGE = 3;
 
 export function paginateMagazine(magazine: Magazine): MagazinePage[] {
   const pages: MagazinePage[] = [];
-  let pageNumber = 1;
+  let pageIndex = 0;
 
-  // Page 1: Cover
+  // Page 0: Cover
   pages.push({
-    type: "cover",
-    pageNumber: pageNumber++,
+    index: pageIndex++,
+    kind: "cover",
   });
 
-  // Page 2: Contents
+  // Page 1: Contents
   pages.push({
-    type: "contents",
-    pageNumber: pageNumber++,
+    index: pageIndex++,
+    kind: "contents",
   });
 
-  // Pages 3+: Articles and Ads
+  // Pages 2+: Articles and Ads
   for (const section of magazine.sections) {
     // Handle advertisement sections
     if (section.kind === "advertisement") {
       pages.push({
-        type: "article",
-        pageNumber: pageNumber++,
-        articleBlock: {
+        index: pageIndex++,
+        kind: "article",
+        article: {
           sectionId: section.id,
           sectionLabel: section.label,
           sectionTitle: section.title,
           section,
+          isContinuation: false,
           paragraphs: [],
-          isFirstPage: true,
-          isLastPage: true,
           pageWithinSection: 1,
         },
       });
@@ -60,7 +58,8 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
     }
 
     // Handle article sections
-    const paragraphs = section.bodyMarkdown
+    const body = section.bodyMarkdown || "";
+    const paragraphs = body
       .split(/\n\n+/)
       .map((p) => p.trim())
       .filter((p) => p.length > 0);
@@ -68,16 +67,15 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
     if (paragraphs.length === 0) {
       // Empty section, create one page anyway
       pages.push({
-        type: "article",
-        pageNumber: pageNumber++,
-        articleBlock: {
+        index: pageIndex++,
+        kind: "article",
+        article: {
           sectionId: section.id,
           sectionLabel: section.label,
           sectionTitle: section.title,
           section,
+          isContinuation: false,
           paragraphs: [],
-          isFirstPage: true,
-          isLastPage: true,
           pageWithinSection: 1,
         },
       });
@@ -86,64 +84,47 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
 
     let currentPageParagraphs: string[] = [];
     let currentCharCount = 0;
-    const sectionPages: ArticlePageBlock[] = [];
+    let pageWithinSection = 0;
 
-    for (let i = 0; i < paragraphs.length; i++) {
-      const para = paragraphs[i];
-      const paraLength = para.length;
-
-      // Check if adding this paragraph would exceed limit
-      if (
-        currentPageParagraphs.length >= MIN_PARAGRAPHS_PER_PAGE &&
-        currentCharCount + paraLength > MAX_CHARS_PER_PAGE
-      ) {
-        // Commit current page
-        sectionPages.push({
+    const flushPage = () => {
+      if (currentPageParagraphs.length === 0) return;
+      
+      pages.push({
+        index: pageIndex++,
+        kind: "article",
+        article: {
           sectionId: section.id,
           sectionLabel: section.label,
           sectionTitle: section.title,
           section,
+          isContinuation: pageWithinSection > 0,
           paragraphs: [...currentPageParagraphs],
-          isFirstPage: sectionPages.length === 0,
-          isLastPage: false,
-          pageWithinSection: sectionPages.length + 1,
-        });
-        currentPageParagraphs = [];
-        currentCharCount = 0;
+          pageWithinSection: ++pageWithinSection,
+        },
+      });
+      
+      currentPageParagraphs = [];
+      currentCharCount = 0;
+    };
+
+    for (const para of paragraphs) {
+      const paraLength = para.length;
+      const wouldOverflowChars = currentCharCount + paraLength > MAX_CHARS_PER_PAGE;
+      const wouldOverflowParagraphs = currentPageParagraphs.length >= MIN_PARAGRAPHS_PER_PAGE;
+
+      // Break page if we have minimum paragraphs and would overflow
+      if (currentPageParagraphs.length >= MIN_PARAGRAPHS_PER_PAGE && wouldOverflowChars) {
+        flushPage();
       }
 
       currentPageParagraphs.push(para);
-      currentCharCount += paraLength;
+      currentCharCount += paraLength + 2; // +2 for spacing
     }
 
-    // Commit last page for this section
-    if (currentPageParagraphs.length > 0) {
-      sectionPages.push({
-        sectionId: section.id,
-        sectionLabel: section.label,
-        sectionTitle: section.title,
-        section,
-        paragraphs: currentPageParagraphs,
-        isFirstPage: sectionPages.length === 0,
-        isLastPage: true,
-        pageWithinSection: sectionPages.length + 1,
-      });
-    }
-
-    // Mark last page
-    if (sectionPages.length > 0) {
-      sectionPages[sectionPages.length - 1].isLastPage = true;
-    }
-
-    // Add all section pages to magazine pages
-    for (const block of sectionPages) {
-      pages.push({
-        type: "article",
-        pageNumber: pageNumber++,
-        articleBlock: block,
-      });
-    }
+    // Flush remaining paragraphs
+    flushPage();
   }
 
-  return pages;
+  // Re-index to ensure sequential 0-based indices
+  return pages.map((page, idx) => ({ ...page, index: idx }));
 }
