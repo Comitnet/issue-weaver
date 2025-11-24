@@ -164,6 +164,18 @@ All colors MUST be HSL.
     padding: 0 !important;
     margin: 0 !important;
   }
+  
+  /* PageFrame should be exactly A4 in print */
+  .aspect-\[210\/297\] {
+    width: 210mm !important;
+    height: 297mm !important;
+    aspect-ratio: auto !important;
+  }
+  
+  /* Prevent images from breaking across pages */
+  .page-break-avoid {
+    page-break-inside: avoid !important;
+  }
 
   /* Force print colors */
   * {
