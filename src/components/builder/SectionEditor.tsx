@@ -447,6 +447,126 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
           </div>
           )}
 
+          {isArticle && section.label.toUpperCase() !== "FROM THE EDITOR" && (
+            <Card className="p-4 space-y-4 bg-muted/30">
+              <h3 className="font-semibold text-sm">Key Points & Pull Quote Placement</h3>
+              
+              <div>
+                <Label>Key Points Placement</Label>
+                <div className="flex flex-col gap-2 mt-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`keyPointsPlacement-${section.id}`}
+                      value="first-page-end"
+                      checked={(section.keyPointsPlacement || "first-page-end") === "first-page-end"}
+                      onChange={(e) => onUpdate({ keyPointsPlacement: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">End of first page</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`keyPointsPlacement-${section.id}`}
+                      value="second-page-top"
+                      checked={section.keyPointsPlacement === "second-page-top"}
+                      onChange={(e) => onUpdate({ keyPointsPlacement: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">Top of second page</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`keyPointsPlacement-${section.id}`}
+                      value="second-page-end"
+                      checked={section.keyPointsPlacement === "second-page-end"}
+                      onChange={(e) => onUpdate({ keyPointsPlacement: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">End of second page</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`keyPointsPlacement-${section.id}`}
+                      value="none"
+                      checked={section.keyPointsPlacement === "none"}
+                      onChange={(e) => onUpdate({ keyPointsPlacement: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">Don't show</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <Label>Pull Quote Placement</Label>
+                <div className="flex flex-col gap-2 mt-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`pullQuotePlacement-${section.id}`}
+                      value="first-page-end"
+                      checked={(section.pullQuotePlacement || "first-page-end") === "first-page-end"}
+                      onChange={(e) => onUpdate({ pullQuotePlacement: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">End of first page</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`pullQuotePlacement-${section.id}`}
+                      value="second-page-top"
+                      checked={section.pullQuotePlacement === "second-page-top"}
+                      onChange={(e) => onUpdate({ pullQuotePlacement: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">Top of second page</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`pullQuotePlacement-${section.id}`}
+                      value="second-page-end"
+                      checked={section.pullQuotePlacement === "second-page-end"}
+                      onChange={(e) => onUpdate({ pullQuotePlacement: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">End of second page</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`pullQuotePlacement-${section.id}`}
+                      value="none"
+                      checked={section.pullQuotePlacement === "none"}
+                      onChange={(e) => onUpdate({ pullQuotePlacement: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">Don't show</span>
+                  </label>
+                </div>
+              </div>
+
+              {(section.keyPointsPlacement === section.pullQuotePlacement && 
+                section.keyPointsPlacement !== "none" && section.pullQuotePlacement !== "none") && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`keyPointsFirst-${section.id}`}
+                    checked={section.keyPointsFirst !== false}
+                    onCheckedChange={(checked) => onUpdate({ keyPointsFirst: checked as boolean })}
+                  />
+                  <Label htmlFor={`keyPointsFirst-${section.id}`} className="cursor-pointer text-sm">
+                    Show Key Points before Pull Quote
+                  </Label>
+                </div>
+              )}
+            </Card>
+          )}
+
           {isArticle && (
             <div>
               <Label htmlFor="statsLine">Stats Line</Label>

@@ -10,6 +10,8 @@ export interface ArticlePageBlock {
   isContinuation: boolean;
   paragraphs: string[];
   pageWithinSection: number;
+  showKeyPoints?: boolean;
+  showPullQuote?: boolean;
 }
 
 export interface MagazinePage {
@@ -19,7 +21,6 @@ export interface MagazinePage {
 }
 
 const MAX_CHARS_PER_PAGE = 2000;
-const FIRST_PAGE_OVERHEAD = 800; // Reserve space for Key Points, Pull Quote, etc.
 
 export function paginateMagazine(magazine: Magazine): MagazinePage[] {
   const pages: MagazinePage[] = [];
@@ -57,7 +58,53 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
       continue;
     }
 
-    // Handle article sections
+    // Special handling for "FROM THE EDITOR" section
+    if (section.label.toUpperCase() === "FROM THE EDITOR") {
+      const body = section.bodyMarkdown || "";
+      const paragraphs = body
+        .split(/\n\n+/)
+        .map((p) => p.trim())
+        .filter((p) => p.length > 0);
+
+      // Page 1: Body content only (no key points/pull quote)
+      pages.push({
+        index: pageIndex++,
+        kind: "article",
+        article: {
+          sectionId: section.id,
+          sectionLabel: section.label,
+          sectionTitle: section.title,
+          section,
+          isContinuation: false,
+          paragraphs,
+          pageWithinSection: 1,
+          showKeyPoints: false,
+          showPullQuote: false,
+        },
+      });
+
+      // Page 2: Key points and pull quote (if they exist)
+      if ((section.keyPoints && section.keyPoints.length > 0) || section.pullQuote) {
+        pages.push({
+          index: pageIndex++,
+          kind: "article",
+          article: {
+            sectionId: section.id,
+            sectionLabel: section.label,
+            sectionTitle: section.title,
+            section,
+            isContinuation: true,
+            paragraphs: [],
+            pageWithinSection: 2,
+            showKeyPoints: true,
+            showPullQuote: true,
+          },
+        });
+      }
+      continue;
+    }
+
+    // Handle regular article sections
     const body = section.bodyMarkdown || "";
     const paragraphs = body
       .split(/\n\n+/)
@@ -86,8 +133,27 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
     let currentCharCount = 0;
     let pageWithinSection = 0;
 
+    // Determine placement settings
+    const keyPointsPlacement = section.keyPointsPlacement || "first-page-end";
+    const pullQuotePlacement = section.pullQuotePlacement || "first-page-end";
+    const keyPointsFirst = section.keyPointsFirst !== false; // default true
+
     const flushPage = () => {
       if (currentPageParagraphs.length === 0) return;
+      
+      pageWithinSection++;
+      
+      // Determine what to show on this page
+      let showKeyPoints = false;
+      let showPullQuote = false;
+
+      if (pageWithinSection === 1) {
+        showKeyPoints = keyPointsPlacement === "first-page-end";
+        showPullQuote = pullQuotePlacement === "first-page-end";
+      } else if (pageWithinSection === 2) {
+        showKeyPoints = keyPointsPlacement === "second-page-top" || keyPointsPlacement === "second-page-end";
+        showPullQuote = pullQuotePlacement === "second-page-top" || pullQuotePlacement === "second-page-end";
+      }
       
       pages.push({
         index: pageIndex++,
@@ -97,9 +163,11 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
           sectionLabel: section.label,
           sectionTitle: section.title,
           section,
-          isContinuation: pageWithinSection > 0,
+          isContinuation: pageWithinSection > 1,
           paragraphs: [...currentPageParagraphs],
-          pageWithinSection: ++pageWithinSection,
+          pageWithinSection,
+          showKeyPoints,
+          showPullQuote,
         },
       });
       
@@ -111,13 +179,7 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
       const paraLength = para.length;
       const newCount = currentCharCount + paraLength + 2;
       
-      // On first page, reserve space for Key Points and Pull Quote
-      const hasExtraContent = section.keyPoints?.length || section.pullQuote;
-      const pageLimit = pageWithinSection === 0 && hasExtraContent 
-        ? MAX_CHARS_PER_PAGE - FIRST_PAGE_OVERHEAD 
-        : MAX_CHARS_PER_PAGE;
-      
-      const wouldOverflow = newCount > pageLimit;
+      const wouldOverflow = newCount > MAX_CHARS_PER_PAGE;
 
       // Break page only if we would overflow AND we have at least one paragraph
       if (wouldOverflow && currentPageParagraphs.length > 0) {

@@ -131,38 +131,38 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
           className="h-full flex flex-col p-12"
           style={{ backgroundColor: palette.background, color: palette.text }}
         >
-          <div className="mb-8">
-            <h2 className="text-5xl font-bold mb-4" style={{ color: palette.primary }}>
+          <div className="mb-6">
+            <h2 className="text-5xl font-bold mb-3" style={{ color: palette.primary }}>
               Contents
             </h2>
             <div className="w-20 h-1.5 rounded-full" style={{ backgroundColor: palette.secondary }} />
           </div>
 
-          <div className="space-y-6 flex-1">
+          <div className="space-y-4 flex-1 overflow-hidden">
             {magazine.sections.map((section, index) => (
               <div
                 key={section.id}
-                className="flex gap-5 items-start pb-4 border-b"
+                className="flex gap-4 items-start pb-3 border-b"
                 style={{ borderColor: `${palette.primary}25` }}
               >
                 <span
-                  className="text-3xl font-bold flex-shrink-0 leading-none"
+                  className="text-2xl font-bold flex-shrink-0 leading-none"
                   style={{ color: palette.primary }}
                 >
                   {String(index + 3).padStart(2, "0")}
                 </span>
                 <div className="flex-1 min-w-0">
                   <p
-                    className="text-xs uppercase tracking-widest mb-2 font-bold"
+                    className="text-xs uppercase tracking-widest mb-1.5 font-bold"
                     style={{ color: palette.secondary }}
                   >
                     {section.label}
                   </p>
-                  <h3 className="font-bold text-xl leading-tight mb-1.5" style={{ color: palette.text }}>
+                  <h3 className="font-bold text-lg leading-tight mb-1" style={{ color: palette.text }}>
                     {section.title}
                   </h3>
                   {section.subtitle && (
-                    <p className="text-base leading-snug" style={{ color: palette.secondary, opacity: 0.9 }}>
+                    <p className="text-sm leading-snug" style={{ color: palette.secondary, opacity: 0.9 }}>
                       {section.subtitle}
                     </p>
                   )}
@@ -176,8 +176,9 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
   }
 
   if (page.kind === "article" && page.article) {
-    const { section, paragraphs, isContinuation, pageWithinSection } = page.article;
+    const { section, paragraphs, isContinuation, pageWithinSection, showKeyPoints, showPullQuote } = page.article;
     const isFirstPage = !isContinuation;
+    const isFromEditor = section.label.toUpperCase() === "FROM THE EDITOR";
 
     // Handle advertisement sections
     if (section.kind === "advertisement") {
@@ -326,6 +327,101 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
         ? "columns-2 gap-8"
         : "columns-3 gap-6";
 
+    // Special handling for "FROM THE EDITOR" section
+    if (isFromEditor) {
+      return (
+        <PageFrame>
+          <div className="relative w-full h-full overflow-hidden">
+            {/* Background image for FROM THE EDITOR */}
+            {section.heroImageUrl && (
+              <>
+                <img
+                  src={section.heroImageUrl}
+                  alt={section.heroImageAlt || section.title}
+                  className="absolute inset-0 w-full h-full object-cover z-0"
+                />
+                <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+              </>
+            )}
+
+            {/* Content */}
+            <div
+              className="relative z-20 h-full flex flex-col p-12"
+              style={{ color: section.heroImageUrl ? "#ffffff" : palette.text }}
+            >
+              {/* Header - only on page 1 */}
+              {pageWithinSection === 1 && (
+                <div className="mb-8">
+                  <p
+                    className="text-xs uppercase tracking-widest mb-3 font-bold"
+                    style={{ color: section.heroImageUrl ? "#ffffff" : palette.secondary, opacity: 0.9 }}
+                  >
+                    {section.label}
+                  </p>
+                  <h2 className="text-5xl font-bold mb-3 leading-tight">
+                    {section.title}
+                  </h2>
+                  {section.subtitle && (
+                    <p className="text-xl mb-4" style={{ opacity: 0.9 }}>
+                      {section.subtitle}
+                    </p>
+                  )}
+                  <div className="w-16 h-1 rounded-full" style={{ backgroundColor: section.heroImageUrl ? "#ffffff" : palette.secondary }} />
+                </div>
+              )}
+
+              {/* Page 1: Body text */}
+              {pageWithinSection === 1 && paragraphs.length > 0 && (
+                <div className={`flex-1 text-base leading-relaxed ${columnClass} overflow-visible`}>
+                  {paragraphs.map((para, idx) => (
+                    <p key={idx} className="mb-4 break-inside-avoid text-justify">
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              )}
+
+              {/* Page 2: Key Points and Pull Quote */}
+              {pageWithinSection === 2 && (
+                <div className="flex-1 flex flex-col justify-center space-y-8">
+                  {section.keyPoints && section.keyPoints.length > 0 && (
+                    <div className="p-6 rounded-lg" style={{ 
+                      backgroundColor: section.heroImageUrl ? "rgba(255,255,255,0.15)" : `${palette.primary}08`,
+                      borderLeft: `4px solid ${section.heroImageUrl ? "#ffffff" : palette.secondary}`
+                    }}>
+                      <h3 className="text-xl font-bold uppercase tracking-wider mb-4">
+                        Key Points
+                      </h3>
+                      <ul className="space-y-3">
+                        {section.keyPoints.map((point, idx) => (
+                          <li key={idx} className="text-lg flex items-start gap-3">
+                            <span style={{ color: section.heroImageUrl ? "#ffffff" : palette.secondary }}>•</span>
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {section.pullQuote && (
+                    <div className="p-8 rounded-lg" style={{ 
+                      backgroundColor: section.heroImageUrl ? "rgba(255,255,255,0.15)" : `${palette.secondary}10`,
+                      borderLeft: `4px solid ${section.heroImageUrl ? "#ffffff" : palette.primary}`
+                    }}>
+                      <p className="text-2xl italic font-medium leading-relaxed">
+                        "{section.pullQuote}"
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </PageFrame>
+      );
+    }
+
+    // Regular article rendering
     return (
       <PageFrame>
         <div
@@ -365,6 +461,54 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
           {/* Top image */}
           {isFirstPage && renderImage("top")}
 
+          {/* Key Points and Pull Quote at top of second page */}
+          {!isFirstPage && pageWithinSection === 2 && (
+            <>
+              {/* Determine order when both are at the same location */}
+              {(() => {
+                const keyPointsAtTop = section.keyPointsPlacement === "second-page-top" && showKeyPoints && section.keyPoints && section.keyPoints.length > 0;
+                const pullQuoteAtTop = section.pullQuotePlacement === "second-page-top" && showPullQuote && section.pullQuote;
+                const keyPointsFirst = section.keyPointsFirst !== false;
+
+                const keyPointsElement = keyPointsAtTop && (
+                  <div className="mb-6 p-4 rounded-lg border-l-4" style={{ 
+                    backgroundColor: `${palette.primary}08`,
+                    borderColor: palette.secondary 
+                  }}>
+                    <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: palette.primary }}>
+                      Key Points
+                    </h3>
+                    <ul className="space-y-2">
+                      {section.keyPoints.map((point, idx) => (
+                        <li key={idx} className="text-sm flex items-start gap-2">
+                          <span style={{ color: palette.secondary }}>•</span>
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+
+                const pullQuoteElement = pullQuoteAtTop && (
+                  <div className="mb-6 p-6 border-l-4" style={{ 
+                    backgroundColor: `${palette.secondary}10`,
+                    borderColor: palette.primary 
+                  }}>
+                    <p className="text-lg italic font-medium leading-relaxed" style={{ color: palette.text }}>
+                      "{section.pullQuote}"
+                    </p>
+                  </div>
+                );
+
+                if (keyPointsFirst) {
+                  return <>{keyPointsElement}{pullQuoteElement}</>;
+                } else {
+                  return <>{pullQuoteElement}{keyPointsElement}</>;
+                }
+              })()}
+            </>
+          )}
+
           {/* Body text with columns */}
           <div className={`flex-1 text-base leading-relaxed ${columnClass} overflow-visible`}>
             {paragraphs.map((para, idx) => (
@@ -374,37 +518,54 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
             ))}
           </div>
 
-          {/* Key Points - only on first page */}
-          {isFirstPage && section.keyPoints && section.keyPoints.length > 0 && (
-            <div className="mt-6 p-4 rounded-lg border-l-4" style={{ 
-              backgroundColor: `${palette.primary}08`,
-              borderColor: palette.secondary 
-            }}>
-              <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: palette.primary }}>
-                Key Points
-              </h3>
-              <ul className="space-y-2">
-                {section.keyPoints.map((point, idx) => (
-                  <li key={idx} className="text-sm flex items-start gap-2">
-                    <span style={{ color: palette.secondary }}>•</span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* Key Points and Pull Quote at end of page */}
+          {(() => {
+            const showKeyPointsAtEnd = showKeyPoints && section.keyPoints && section.keyPoints.length > 0 && 
+              ((isFirstPage && section.keyPointsPlacement === "first-page-end") || 
+               (pageWithinSection === 2 && section.keyPointsPlacement === "second-page-end"));
+            
+            const showPullQuoteAtEnd = showPullQuote && section.pullQuote && 
+              ((isFirstPage && section.pullQuotePlacement === "first-page-end") || 
+               (pageWithinSection === 2 && section.pullQuotePlacement === "second-page-end"));
+            
+            const keyPointsFirst = section.keyPointsFirst !== false;
 
-          {/* Pull Quote - only on first page */}
-          {isFirstPage && section.pullQuote && (
-            <div className="mt-6 p-6 border-l-4" style={{ 
-              backgroundColor: `${palette.secondary}10`,
-              borderColor: palette.primary 
-            }}>
-              <p className="text-lg italic font-medium leading-relaxed" style={{ color: palette.text }}>
-                "{section.pullQuote}"
-              </p>
-            </div>
-          )}
+            const keyPointsElement = showKeyPointsAtEnd && (
+              <div className="mt-6 p-4 rounded-lg border-l-4" style={{ 
+                backgroundColor: `${palette.primary}08`,
+                borderColor: palette.secondary 
+              }}>
+                <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: palette.primary }}>
+                  Key Points
+                </h3>
+                <ul className="space-y-2">
+                  {section.keyPoints.map((point, idx) => (
+                    <li key={idx} className="text-sm flex items-start gap-2">
+                      <span style={{ color: palette.secondary }}>•</span>
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+
+            const pullQuoteElement = showPullQuoteAtEnd && (
+              <div className="mt-6 p-6 border-l-4" style={{ 
+                backgroundColor: `${palette.secondary}10`,
+                borderColor: palette.primary 
+              }}>
+                <p className="text-lg italic font-medium leading-relaxed" style={{ color: palette.text }}>
+                  "{section.pullQuote}"
+                </p>
+              </div>
+            );
+
+            if (keyPointsFirst) {
+              return <>{keyPointsElement}{pullQuoteElement}</>;
+            } else {
+              return <>{pullQuoteElement}{keyPointsElement}</>;
+            }
+          })()}
 
           {/* Bottom image */}
           {renderImage("bottom")}
