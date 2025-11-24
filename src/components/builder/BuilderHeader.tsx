@@ -8,6 +8,7 @@ interface BuilderHeaderProps {
   onExportJSON: () => void;
   onImportJSON: () => void;
   onExportPDF: () => void;
+  onExportDocx: () => void;
   onSettings: () => void;
   onShare: () => void;
 }
@@ -18,6 +19,7 @@ export const BuilderHeader = ({
   onExportJSON,
   onImportJSON,
   onExportPDF,
+  onExportDocx,
   onSettings,
   onShare,
 }: BuilderHeaderProps) => {
@@ -52,6 +54,11 @@ export const BuilderHeader = ({
           <Button variant="outline" size="sm" onClick={onExportPDF}>
             <FileText className="mr-2 h-4 w-4" />
             Export PDF
+          </Button>
+          
+          <Button variant="outline" size="sm" onClick={onExportDocx}>
+            <Download className="mr-2 h-4 w-4" />
+            Export DOCX
           </Button>
           
           <div className="h-6 w-px bg-border" />
