@@ -20,7 +20,7 @@ export interface MagazinePage {
   article?: ArticlePageBlock;
 }
 
-const MAX_CHARS_PER_PAGE = 2000;
+const MAX_CHARS_PER_PAGE = 2500;
 
 export function paginateMagazine(magazine: Magazine): MagazinePage[] {
   const pages: MagazinePage[] = [];
