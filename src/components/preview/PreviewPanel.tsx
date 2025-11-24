@@ -27,10 +27,10 @@ export const PreviewPanel = ({ magazine }: PreviewPanelProps) => {
 
   const getPageTitle = () => {
     if (!currentMagazinePage) return "";
-    if (currentMagazinePage.type === "cover") return "Cover";
-    if (currentMagazinePage.type === "contents") return "Contents";
-    if (currentMagazinePage.articleBlock) {
-      return currentMagazinePage.articleBlock.sectionTitle;
+    if (currentMagazinePage.kind === "cover") return "Cover";
+    if (currentMagazinePage.kind === "contents") return "Contents";
+    if (currentMagazinePage.article) {
+      return currentMagazinePage.article.sectionTitle;
     }
     return "";
   };

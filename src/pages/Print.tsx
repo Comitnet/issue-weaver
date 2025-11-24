@@ -72,7 +72,7 @@ const Print = () => {
       {/* Magazine pages */}
       <div className="print-container py-8 px-4 space-y-8">
         {pages.map((page) => (
-          <div key={page.pageNumber} className="print-page mx-auto max-w-[800px]">
+          <div key={page.index} className="print-page mx-auto max-w-[800px]">
             <MagazinePageView magazine={magazine} page={page} />
           </div>
         ))}

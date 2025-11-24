@@ -15,7 +15,7 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
     text: "#0f172a",
   };
 
-  if (page.type === "cover") {
+  if (page.kind === "cover") {
     return (
       <PageFrame>
         <div className="relative w-full h-full overflow-hidden">
@@ -124,7 +124,7 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
     );
   }
 
-  if (page.type === "contents") {
+  if (page.kind === "contents") {
     return (
       <PageFrame>
         <div
@@ -175,8 +175,9 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
     );
   }
 
-  if (page.type === "article" && page.articleBlock) {
-    const { section, paragraphs, isFirstPage, pageWithinSection } = page.articleBlock;
+  if (page.kind === "article" && page.article) {
+    const { section, paragraphs, isContinuation, pageWithinSection } = page.article;
+    const isFirstPage = !isContinuation;
 
     // Handle advertisement sections
     if (section.kind === "advertisement") {
