@@ -351,18 +351,18 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
             >
               {/* Header - only on page 1 */}
               {pageWithinSection === 1 && (
-                <div className="mb-8">
+                <div className="mb-6 flex-shrink-0">
                   <p
-                    className="text-xs uppercase tracking-widest mb-3 font-bold"
+                    className="text-xs uppercase tracking-widest mb-2 font-bold"
                     style={{ color: section.heroImageUrl ? "#ffffff" : palette.secondary, opacity: 0.9 }}
                   >
                     {section.label}
                   </p>
-                  <h2 className="text-5xl font-bold mb-3 leading-tight">
+                  <h2 className="text-4xl font-bold mb-2 leading-tight">
                     {section.title}
                   </h2>
                   {section.subtitle && (
-                    <p className="text-xl mb-4" style={{ opacity: 0.9 }}>
+                    <p className="text-lg mb-3" style={{ opacity: 0.9 }}>
                       {section.subtitle}
                     </p>
                   )}
@@ -370,11 +370,11 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
                 </div>
               )}
 
-              {/* Page 1: Body text */}
+              {/* Page 1: Body text - all content must fit on one page */}
               {pageWithinSection === 1 && paragraphs.length > 0 && (
-                <div className={`flex-1 text-base leading-relaxed ${columnClass} overflow-visible`}>
+                <div className={`flex-1 ${columnClass} text-sm leading-relaxed overflow-hidden`}>
                   {paragraphs.map((para, idx) => (
-                    <p key={idx} className="mb-4 break-inside-avoid text-justify">
+                    <p key={idx} className="mb-3 break-inside-avoid text-justify">
                       {para}
                     </p>
                   ))}
