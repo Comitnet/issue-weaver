@@ -1,10 +1,9 @@
 import { Magazine } from "@/types/magazine";
 import { Button } from "@/components/ui/button";
-import { CoverPreview } from "./CoverPreview";
-import { ContentsPagePreview } from "./ContentsPagePreview";
-import { SectionPagePreview } from "./SectionPagePreview";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { MagazinePageView } from "./MagazinePageView";
+import { paginateMagazine } from "@/lib/pagination";
 
 interface PreviewPanelProps {
   magazine: Magazine;
@@ -12,7 +11,9 @@ interface PreviewPanelProps {
 
 export const PreviewPanel = ({ magazine }: PreviewPanelProps) => {
   const [currentPage, setCurrentPage] = useState(0);
-  const totalPages = 2 + magazine.sections.length; // Cover + Contents + Sections
+  
+  const pages = useMemo(() => paginateMagazine(magazine), [magazine]);
+  const totalPages = pages.length;
 
   const goToPrevPage = () => {
     setCurrentPage((prev) => Math.max(0, prev - 1));
@@ -22,21 +23,16 @@ export const PreviewPanel = ({ magazine }: PreviewPanelProps) => {
     setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
   };
 
-  const renderPage = () => {
-    if (currentPage === 0) {
-      return <CoverPreview magazine={magazine} />;
-    } else if (currentPage === 1) {
-      return <ContentsPagePreview magazine={magazine} />;
-    } else {
-      const sectionIndex = currentPage - 2;
-      return <SectionPagePreview magazine={magazine} section={magazine.sections[sectionIndex]} />;
-    }
-  };
+  const currentMagazinePage = pages[currentPage];
 
   const getPageTitle = () => {
-    if (currentPage === 0) return "Cover";
-    if (currentPage === 1) return "Contents";
-    return magazine.sections[currentPage - 2]?.title || "Section";
+    if (!currentMagazinePage) return "";
+    if (currentMagazinePage.type === "cover") return "Cover";
+    if (currentMagazinePage.type === "contents") return "Contents";
+    if (currentMagazinePage.articleBlock) {
+      return currentMagazinePage.articleBlock.sectionTitle;
+    }
+    return "";
   };
 
   return (
@@ -66,8 +62,10 @@ export const PreviewPanel = ({ magazine }: PreviewPanelProps) => {
       </div>
       
       <div className="flex-1 flex justify-center items-start">
-        <div className="w-full max-w-lg">
-          {renderPage()}
+        <div className="w-full max-w-[800px]">
+          {currentMagazinePage && (
+            <MagazinePageView magazine={magazine} page={currentMagazinePage} />
+          )}
         </div>
       </div>
     </div>

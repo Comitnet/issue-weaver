@@ -1,16 +1,17 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Magazine } from "@/types/magazine";
 import { Button } from "@/components/ui/button";
-import { CoverPreview } from "@/components/preview/CoverPreview";
-import { ContentsPagePreview } from "@/components/preview/ContentsPagePreview";
-import { SectionPagePreview } from "@/components/preview/SectionPagePreview";
+import { MagazinePageView } from "@/components/preview/MagazinePageView";
+import { paginateMagazine } from "@/lib/pagination";
 import { ArrowLeft, Printer } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 const Print = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [magazine, setMagazine] = useState<Magazine | null>(null);
+  
+  const pages = useMemo(() => (magazine ? paginateMagazine(magazine) : []), [magazine]);
 
   useEffect(() => {
     // Try to get magazine from navigation state first
@@ -70,20 +71,9 @@ const Print = () => {
 
       {/* Magazine pages */}
       <div className="print-container py-8 px-4 space-y-8">
-        {/* Cover Page */}
-        <div className="print-page mx-auto">
-          <CoverPreview magazine={magazine} />
-        </div>
-
-        {/* Contents Page */}
-        <div className="print-page mx-auto">
-          <ContentsPagePreview magazine={magazine} />
-        </div>
-
-        {/* Section Pages */}
-        {magazine.sections.map((section) => (
-          <div key={section.id} className="print-page mx-auto">
-            <SectionPagePreview magazine={magazine} section={section} />
+        {pages.map((page) => (
+          <div key={page.pageNumber} className="print-page mx-auto max-w-[800px]">
+            <MagazinePageView magazine={magazine} page={page} />
           </div>
         ))}
       </div>
