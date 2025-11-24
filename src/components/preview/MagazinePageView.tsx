@@ -45,7 +45,7 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
           <div
             className="relative z-20 flex flex-col h-full justify-between p-12"
             style={{
-              color: magazine.coverImageStyle === "full-bleed" ? "#ffffff" : palette.text,
+              color: magazine.coverTextColor || (magazine.coverImageStyle === "full-bleed" ? "#ffffff" : palette.text),
             }}
           >
             {/* Header */}
@@ -57,7 +57,10 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
                   </p>
                 )}
                 {magazine.issueLabel && (
-                  <p className="text-xs uppercase tracking-wider opacity-75">
+                  <p 
+                    className="text-xs uppercase tracking-wider opacity-75"
+                    style={{ color: magazine.coverAccentColor || (magazine.coverImageStyle === "full-bleed" ? "#ffffff" : palette.secondary) }}
+                  >
                     {magazine.issueLabel}
                   </p>
                 )}
@@ -78,7 +81,12 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
                 <p className="text-2xl opacity-90 mb-6">{magazine.subtitle}</p>
               )}
               {magazine.tagline && (
-                <p className="text-lg uppercase tracking-wider opacity-75">{magazine.tagline}</p>
+                <p 
+                  className="text-lg uppercase tracking-wider opacity-75"
+                  style={{ color: magazine.coverAccentColor || (magazine.coverImageStyle === "full-bleed" ? "#ffffff" : palette.secondary) }}
+                >
+                  {magazine.tagline}
+                </p>
               )}
             </div>
 
@@ -86,7 +94,12 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
             <div className="space-y-3">
               {magazine.themeTitle && (
                 <div>
-                  <p className="text-xs uppercase tracking-widest mb-1 opacity-75">This Issue</p>
+                  <p 
+                    className="text-xs uppercase tracking-widest mb-1 opacity-75"
+                    style={{ color: magazine.coverAccentColor || (magazine.coverImageStyle === "full-bleed" ? "#ffffff" : palette.secondary) }}
+                  >
+                    This Issue
+                  </p>
                   <p className="text-lg font-bold">{magazine.themeTitle}</p>
                 </div>
               )}
@@ -163,7 +176,109 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
   }
 
   if (page.type === "article" && page.articleBlock) {
-    const { section, paragraphs, isFirstPage } = page.articleBlock;
+    const { section, paragraphs, isFirstPage, pageWithinSection } = page.articleBlock;
+
+    // Handle advertisement sections
+    if (section.kind === "advertisement") {
+      const adLayout = section.adLayout || "full-page";
+      
+      if (adLayout === "full-page") {
+        return (
+          <PageFrame>
+            <div className="relative h-full flex flex-col" style={{ backgroundColor: palette.background }}>
+              {section.adImageUrl && (
+                <img
+                  src={section.adImageUrl}
+                  alt={section.adAltText || "Advertisement"}
+                  className="w-full h-full object-cover"
+                />
+              )}
+              <div className="absolute inset-0 flex flex-col justify-end p-12 bg-gradient-to-t from-black/60 to-transparent">
+                {section.adHeadline && (
+                  <h2 className="text-4xl font-bold text-white mb-2">{section.adHeadline}</h2>
+                )}
+                {section.adBody && (
+                  <p className="text-lg text-white/90 mb-4">{section.adBody}</p>
+                )}
+                {section.adCallToAction && (
+                  <p className="text-sm font-bold text-white uppercase tracking-wider">{section.adCallToAction}</p>
+                )}
+                <p className="text-xs text-white/60 mt-6 uppercase tracking-widest">Advertisement</p>
+              </div>
+            </div>
+          </PageFrame>
+        );
+      }
+
+      if (adLayout === "half-top" || adLayout === "half-bottom") {
+        const isTop = adLayout === "half-top";
+        return (
+          <PageFrame>
+            <div className="h-full flex flex-col" style={{ backgroundColor: palette.background }}>
+              {isTop && (
+                <div className="relative h-1/2 flex flex-col justify-end p-8 bg-muted">
+                  {section.adImageUrl ? (
+                    <>
+                      <img
+                        src={section.adImageUrl}
+                        alt={section.adAltText || "Advertisement"}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                      <div className="relative z-10">
+                        {section.adHeadline && (
+                          <h3 className="text-2xl font-bold text-white mb-1">{section.adHeadline}</h3>
+                        )}
+                        {section.adBody && (
+                          <p className="text-sm text-white/90">{section.adBody}</p>
+                        )}
+                        {section.adCallToAction && (
+                          <p className="text-xs font-bold text-white uppercase tracking-wider mt-2">{section.adCallToAction}</p>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <p className="text-muted-foreground text-center">Advertisement placeholder</p>
+                    </div>
+                  )}
+                </div>
+              )}
+              <div className="h-1/2 flex items-center justify-center" style={{ backgroundColor: palette.background }}>
+                <p className="text-muted-foreground text-center">Content space</p>
+              </div>
+              {!isTop && (
+                <div className="relative h-1/2 flex flex-col justify-end p-8 bg-muted">
+                  {section.adImageUrl ? (
+                    <>
+                      <img
+                        src={section.adImageUrl}
+                        alt={section.adAltText || "Advertisement"}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                      <div className="relative z-10">
+                        {section.adHeadline && (
+                          <h3 className="text-2xl font-bold text-white mb-1">{section.adHeadline}</h3>
+                        )}
+                        {section.adBody && (
+                          <p className="text-sm text-white/90">{section.adBody}</p>
+                        )}
+                        {section.adCallToAction && (
+                          <p className="text-xs font-bold text-white uppercase tracking-wider mt-2">{section.adCallToAction}</p>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <p className="text-muted-foreground text-center">Advertisement placeholder</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </PageFrame>
+        );
+      }
+    }
 
     const getImageSizeClass = () => {
       switch (section.heroImageSize) {
@@ -202,6 +317,14 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
       );
     };
 
+    const columnCount = section.columnCount || 1;
+    const columnClass =
+      columnCount === 1
+        ? "columns-1"
+        : columnCount === 2
+        ? "columns-2 gap-8"
+        : "columns-3 gap-6";
+
     return (
       <PageFrame>
         <div
@@ -229,13 +352,24 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
             </div>
           )}
 
+          {/* Continuation page header */}
+          {!isFirstPage && (
+            <div className="mb-6 pb-2 border-b" style={{ borderColor: `${palette.primary}25` }}>
+              <p className="text-xs uppercase tracking-wider" style={{ color: palette.secondary }}>
+                {section.label} • Page {pageWithinSection}
+              </p>
+            </div>
+          )}
+
           {/* Top image */}
           {isFirstPage && renderImage("top")}
 
-          {/* Body text */}
-          <div className="flex-1 space-y-4 text-base leading-relaxed">
+          {/* Body text with columns */}
+          <div className={`flex-1 text-base leading-relaxed ${columnClass}`}>
             {paragraphs.map((para, idx) => (
-              <p key={idx}>{para}</p>
+              <p key={idx} className="mb-4 break-inside-avoid">
+                {para}
+              </p>
             ))}
           </div>
 

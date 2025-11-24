@@ -32,6 +32,8 @@ export const MagazineSettingsDialog = ({
     publisherWebsite: magazine.publisherWebsite || "",
     publicationDate: magazine.publicationDate,
     language: magazine.language || "",
+    coverTextColor: magazine.coverTextColor || "",
+    coverAccentColor: magazine.coverAccentColor || "",
   });
 
   const handleSave = () => {
@@ -54,8 +56,9 @@ export const MagazineSettingsDialog = ({
         </DialogHeader>
 
         <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="basic">Basic Info</TabsTrigger>
+            <TabsTrigger value="cover">Cover</TabsTrigger>
             <TabsTrigger value="theme">Theme</TabsTrigger>
             <TabsTrigger value="publisher">Publisher</TabsTrigger>
           </TabsList>
@@ -133,6 +136,50 @@ export const MagazineSettingsDialog = ({
                   placeholder="en"
                 />
               </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="cover" className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="coverTextColor">Cover Text Color</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="coverTextColor"
+                  value={formData.coverTextColor}
+                  onChange={(e) => handleChange("coverTextColor", e.target.value)}
+                  placeholder="#ffffff or hsl(0, 0%, 100%)"
+                />
+                <input
+                  type="color"
+                  value={formData.coverTextColor || "#ffffff"}
+                  onChange={(e) => handleChange("coverTextColor", e.target.value)}
+                  className="w-12 h-10 rounded border cursor-pointer"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Override text color on the cover (for contrast with background image)
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="coverAccentColor">Cover Accent Color</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="coverAccentColor"
+                  value={formData.coverAccentColor}
+                  onChange={(e) => handleChange("coverAccentColor", e.target.value)}
+                  placeholder="#f59e0b or hsl(38, 92%, 50%)"
+                />
+                <input
+                  type="color"
+                  value={formData.coverAccentColor || "#f59e0b"}
+                  onChange={(e) => handleChange("coverAccentColor", e.target.value)}
+                  className="w-12 h-10 rounded border cursor-pointer"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Override accent color for labels and taglines on the cover
+              </p>
             </div>
           </TabsContent>
 

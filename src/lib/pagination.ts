@@ -10,6 +10,7 @@ export interface ArticlePageBlock {
   paragraphs: string[];
   isFirstPage: boolean;
   isLastPage: boolean;
+  pageWithinSection: number;
 }
 
 export interface MagazinePage {
@@ -37,8 +38,28 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
     pageNumber: pageNumber++,
   });
 
-  // Pages 3+: Articles
+  // Pages 3+: Articles and Ads
   for (const section of magazine.sections) {
+    // Handle advertisement sections
+    if (section.kind === "advertisement") {
+      pages.push({
+        type: "article",
+        pageNumber: pageNumber++,
+        articleBlock: {
+          sectionId: section.id,
+          sectionLabel: section.label,
+          sectionTitle: section.title,
+          section,
+          paragraphs: [],
+          isFirstPage: true,
+          isLastPage: true,
+          pageWithinSection: 1,
+        },
+      });
+      continue;
+    }
+
+    // Handle article sections
     const paragraphs = section.bodyMarkdown
       .split(/\n\n+/)
       .map((p) => p.trim())
@@ -57,6 +78,7 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
           paragraphs: [],
           isFirstPage: true,
           isLastPage: true,
+          pageWithinSection: 1,
         },
       });
       continue;
@@ -84,6 +106,7 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
           paragraphs: [...currentPageParagraphs],
           isFirstPage: sectionPages.length === 0,
           isLastPage: false,
+          pageWithinSection: sectionPages.length + 1,
         });
         currentPageParagraphs = [];
         currentCharCount = 0;
@@ -103,6 +126,7 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
         paragraphs: currentPageParagraphs,
         isFirstPage: sectionPages.length === 0,
         isLastPage: true,
+        pageWithinSection: sectionPages.length + 1,
       });
     }
 

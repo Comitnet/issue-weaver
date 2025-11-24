@@ -8,12 +8,17 @@ export interface ColorPalette {
 export type HeroImagePlacement = "top" | "middle" | "bottom";
 export type HeroImageAlignment = "left" | "center" | "right";
 export type HeroImageSize = "small" | "medium" | "large";
+export type SectionKind = "article" | "advertisement";
+export type SectionColumnCount = 1 | 2 | 3;
+export type AdLayout = "full-page" | "half-top" | "half-bottom";
 
 export interface Section {
   id: string;
   label: string;
   title: string;
   subtitle?: string;
+  kind?: SectionKind;
+  columnCount?: SectionColumnCount;
   heroImageUrl?: string;
   heroImageAlt?: string;
   heroImageSource?: "upload" | "ai" | "url";
@@ -22,6 +27,12 @@ export interface Section {
   heroImageAlignment?: HeroImageAlignment;
   heroImageSize?: HeroImageSize;
   wrapTextAroundImage?: boolean;
+  adLayout?: AdLayout;
+  adImageUrl?: string;
+  adAltText?: string;
+  adHeadline?: string;
+  adBody?: string;
+  adCallToAction?: string;
   keyPoints: string[];
   pullQuote?: string;
   statsLine?: string;
@@ -47,6 +58,8 @@ export interface Magazine {
   language?: string;
   accentColorHex?: string;
   colorPalette?: ColorPalette;
+  coverTextColor?: string;
+  coverAccentColor?: string;
   publisherLogoUrl?: string;
   logoLibrary?: string[];
   coverImageUrl?: string;

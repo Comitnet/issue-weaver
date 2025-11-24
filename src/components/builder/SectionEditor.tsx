@@ -27,6 +27,9 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
     onUpdate({ keyPoints: section.keyPoints.filter((_, i) => i !== index) });
   };
 
+  const isArticle = (section.kind || "article") === "article";
+  const isAd = section.kind === "advertisement";
+
   return (
     <div className="h-full overflow-y-auto border-r border-border bg-background">
       <div className="p-6 space-y-6">
@@ -35,6 +38,34 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
         </div>
 
         <div className="space-y-4">
+          <div>
+            <Label>Section Type</Label>
+            <div className="flex gap-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name={`kind-${section.id}`}
+                  value="article"
+                  checked={isArticle}
+                  onChange={() => onUpdate({ kind: "article" })}
+                  className="cursor-pointer"
+                />
+                <span className="text-sm">Article</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name={`kind-${section.id}`}
+                  value="advertisement"
+                  checked={isAd}
+                  onChange={() => onUpdate({ kind: "advertisement" })}
+                  className="cursor-pointer"
+                />
+                <span className="text-sm">Advertisement</span>
+              </label>
+            </div>
+          </div>
+
           <div>
             <Label htmlFor="label">Label</Label>
             <Input
@@ -65,18 +96,158 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
             />
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="showOnCover"
-              checked={section.showOnCover || false}
-              onCheckedChange={(checked) => onUpdate({ showOnCover: checked as boolean })}
-            />
-            <Label htmlFor="showOnCover" className="cursor-pointer">
-              Show this article on cover page
-            </Label>
-          </div>
+          {isArticle && (
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="showOnCover"
+                checked={section.showOnCover || false}
+                onCheckedChange={(checked) => onUpdate({ showOnCover: checked as boolean })}
+              />
+              <Label htmlFor="showOnCover" className="cursor-pointer">
+                Show this article on cover page
+              </Label>
+            </div>
+          )}
 
-          <Card className="p-4 space-y-4 bg-muted/30">
+          {isArticle && (
+            <div>
+              <Label>Text Layout (Columns)</Label>
+              <div className="flex gap-3">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`columns-${section.id}`}
+                    value="1"
+                    checked={(section.columnCount || 1) === 1}
+                    onChange={() => onUpdate({ columnCount: 1 })}
+                    className="cursor-pointer"
+                  />
+                  <span className="text-sm">1 Column</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`columns-${section.id}`}
+                    value="2"
+                    checked={section.columnCount === 2}
+                    onChange={() => onUpdate({ columnCount: 2 })}
+                    className="cursor-pointer"
+                  />
+                  <span className="text-sm">2 Columns</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`columns-${section.id}`}
+                    value="3"
+                    checked={section.columnCount === 3}
+                    onChange={() => onUpdate({ columnCount: 3 })}
+                    className="cursor-pointer"
+                  />
+                  <span className="text-sm">3 Columns</span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {isAd && (
+            <Card className="p-4 space-y-4 bg-muted/30">
+              <h3 className="font-semibold text-sm">Advertisement Layout</h3>
+              
+              <div>
+                <Label>Ad Layout</Label>
+                <div className="flex flex-col gap-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`adLayout-${section.id}`}
+                      value="full-page"
+                      checked={(section.adLayout || "full-page") === "full-page"}
+                      onChange={(e) => onUpdate({ adLayout: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">Full Page</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`adLayout-${section.id}`}
+                      value="half-top"
+                      checked={section.adLayout === "half-top"}
+                      onChange={(e) => onUpdate({ adLayout: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">Half Page - Top</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`adLayout-${section.id}`}
+                      value="half-bottom"
+                      checked={section.adLayout === "half-bottom"}
+                      onChange={(e) => onUpdate({ adLayout: e.target.value as any })}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm">Half Page - Bottom</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="adImageUrl">Ad Image URL</Label>
+                <Input
+                  id="adImageUrl"
+                  value={section.adImageUrl || ""}
+                  onChange={(e) => onUpdate({ adImageUrl: e.target.value })}
+                  placeholder="https://example.com/ad-image.jpg"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="adAltText">Ad Alt Text</Label>
+                <Input
+                  id="adAltText"
+                  value={section.adAltText || ""}
+                  onChange={(e) => onUpdate({ adAltText: e.target.value })}
+                  placeholder="Describe the ad image"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="adHeadline">Ad Headline</Label>
+                <Input
+                  id="adHeadline"
+                  value={section.adHeadline || ""}
+                  onChange={(e) => onUpdate({ adHeadline: e.target.value })}
+                  placeholder="Short attention-grabbing headline"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="adBody">Ad Body Text</Label>
+                <Textarea
+                  id="adBody"
+                  value={section.adBody || ""}
+                  onChange={(e) => onUpdate({ adBody: e.target.value })}
+                  placeholder="Brief ad description"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="adCallToAction">Call to Action</Label>
+                <Input
+                  id="adCallToAction"
+                  value={section.adCallToAction || ""}
+                  onChange={(e) => onUpdate({ adCallToAction: e.target.value })}
+                  placeholder="e.g., Visit example.com or Learn More"
+                />
+              </div>
+            </Card>
+          )}
+
+          {isArticle && (
+            <Card className="p-4 space-y-4 bg-muted/30">
             <h3 className="font-semibold text-sm">Hero Image</h3>
             
             <div>
@@ -231,8 +402,10 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
               </>
             )}
           </Card>
+          )}
 
-          <div>
+          {isArticle && (
+            <div>
             <div className="flex items-center justify-between mb-2">
               <Label>Key Points</Label>
               <Button size="sm" variant="outline" onClick={addKeyPoint}>
@@ -259,9 +432,11 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
               ))}
             </div>
           </div>
+          )}
 
-          <div>
-            <Label htmlFor="pullQuote">Pull Quote</Label>
+          {isArticle && (
+            <div>
+              <Label htmlFor="pullQuote">Pull Quote</Label>
             <Textarea
               id="pullQuote"
               value={section.pullQuote || ""}
@@ -270,9 +445,11 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
               rows={2}
             />
           </div>
+          )}
 
-          <div>
-            <Label htmlFor="statsLine">Stats Line</Label>
+          {isArticle && (
+            <div>
+              <Label htmlFor="statsLine">Stats Line</Label>
             <Input
               id="statsLine"
               value={section.statsLine || ""}
@@ -280,9 +457,11 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
               placeholder="e.g., 75% increase in engagement"
             />
           </div>
+          )}
 
-          <div>
-            <Label htmlFor="body">Body Content (Markdown)</Label>
+          {isArticle && (
+            <div>
+              <Label htmlFor="body">Body Content (Markdown)</Label>
             <Textarea
               id="body"
               value={section.bodyMarkdown}
@@ -292,6 +471,7 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
               className="font-mono text-sm"
             />
           </div>
+          )}
         </div>
       </div>
     </div>
