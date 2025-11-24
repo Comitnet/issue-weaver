@@ -18,7 +18,7 @@ export interface MagazinePage {
   article?: ArticlePageBlock;
 }
 
-const MAX_CHARS_PER_PAGE = 3000;
+const MAX_CHARS_PER_PAGE = 2000;
 const FIRST_PAGE_OVERHEAD = 800; // Reserve space for Key Points, Pull Quote, etc.
 
 export function paginateMagazine(magazine: Magazine): MagazinePage[] {
