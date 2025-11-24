@@ -18,8 +18,7 @@ export interface MagazinePage {
   article?: ArticlePageBlock;
 }
 
-const MAX_CHARS_PER_PAGE = 1400;
-const MIN_PARAGRAPHS_PER_PAGE = 3;
+const MAX_CHARS_PER_PAGE = 2200;
 
 export function paginateMagazine(magazine: Magazine): MagazinePage[] {
   const pages: MagazinePage[] = [];
@@ -109,11 +108,11 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
 
     for (const para of paragraphs) {
       const paraLength = para.length;
-      const wouldOverflowChars = currentCharCount + paraLength > MAX_CHARS_PER_PAGE;
-      const wouldOverflowParagraphs = currentPageParagraphs.length >= MIN_PARAGRAPHS_PER_PAGE;
+      const newCount = currentCharCount + paraLength + 2;
+      const wouldOverflow = newCount > MAX_CHARS_PER_PAGE;
 
-      // Break page if we have minimum paragraphs and would overflow
-      if (currentPageParagraphs.length >= MIN_PARAGRAPHS_PER_PAGE && wouldOverflowChars) {
+      // Break page only if we would overflow AND we have at least one paragraph
+      if (wouldOverflow && currentPageParagraphs.length > 0) {
         flushPage();
       }
 
