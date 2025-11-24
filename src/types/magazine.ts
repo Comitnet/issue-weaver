@@ -11,6 +11,8 @@ export type HeroImageSize = "small" | "medium" | "large";
 export type SectionKind = "article" | "advertisement";
 export type SectionColumnCount = 1 | 2 | 3;
 export type AdLayout = "full-page" | "half-top" | "half-bottom";
+export type KeyPointsPlacement = "first-page-end" | "second-page-top" | "second-page-end" | "none";
+export type PullQuotePlacement = "first-page-end" | "second-page-top" | "second-page-end" | "none";
 
 export interface Section {
   id: string;
@@ -35,6 +37,9 @@ export interface Section {
   adCallToAction?: string;
   keyPoints: string[];
   pullQuote?: string;
+  keyPointsPlacement?: KeyPointsPlacement;
+  pullQuotePlacement?: PullQuotePlacement;
+  keyPointsFirst?: boolean;
   statsLine?: string;
   bodyMarkdown: string;
   showOnCover?: boolean;
