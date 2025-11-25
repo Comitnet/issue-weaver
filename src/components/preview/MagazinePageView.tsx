@@ -1,5 +1,5 @@
 import { Magazine, Section } from "@/types/magazine";
-import { MagazinePage } from "@/lib/pagination";
+import { MagazinePage, paginateMagazine } from "@/lib/pagination";
 import { PageFrame } from "./PageFrame";
 
 interface MagazinePageViewProps {
@@ -125,8 +125,23 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
   }
 
   if (page.kind === "contents") {
-    // Note: We need access to all pages to find the correct page numbers for each section
-    // This is a simplified version - you may need to pass pages array as a prop
+    // Get all pages from pagination to find the correct page numbers
+    const pages = paginateMagazine(magazine);
+
+    // Build a map from section ID to its first article page number
+    const sectionFirstPageMap = new Map<string, number>();
+
+    for (const p of pages) {
+      if (p.kind !== "article" || !p.article) continue;
+
+      const sectionId = p.article.sectionId;
+
+      // Only record the FIRST page we see for each section
+      if (!sectionFirstPageMap.has(sectionId)) {
+        sectionFirstPageMap.set(sectionId, p.pageNumber);
+      }
+    }
+
     return (
       <PageFrame>
         <div
@@ -142,9 +157,12 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
 
           <div className="space-y-4 flex-1 overflow-hidden">
             {magazine.sections.map((section, index) => {
-              // Fallback: assuming sequential page numbering starting at page 2
-              // Ideally, this should look up the actual first page for this section
-              const sectionPageNumber = index + 2;
+              const mappedPageNumber = sectionFirstPageMap.get(section.id);
+
+              // Fallback for safety: if for some reason this section has no pages,
+              // fall back to the old index-based estimate.
+              const sectionPageNumber =
+                mappedPageNumber !== undefined ? mappedPageNumber : index + 2;
               
               return (
                 <div
