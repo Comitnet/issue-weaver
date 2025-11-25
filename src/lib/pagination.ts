@@ -16,6 +16,7 @@ export interface ArticlePageBlock {
 
 export interface MagazinePage {
   index: number;
+  pageNumber: number;
   kind: PageKind;
   article?: ArticlePageBlock;
 }
@@ -29,12 +30,14 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
   // Page 0: Cover
   pages.push({
     index: pageIndex++,
+    pageNumber: 0, // Will be set at the end
     kind: "cover",
   });
 
   // Page 1: Contents
   pages.push({
     index: pageIndex++,
+    pageNumber: 0, // Will be set at the end
     kind: "contents",
   });
 
@@ -44,6 +47,7 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
     if (section.kind === "advertisement") {
       pages.push({
         index: pageIndex++,
+        pageNumber: 0, // Will be set at the end
         kind: "article",
         article: {
           sectionId: section.id,
@@ -69,6 +73,7 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
       // Page 1: Body content only (no key points/pull quote)
       pages.push({
         index: pageIndex++,
+        pageNumber: 0, // Will be set at the end
         kind: "article",
         article: {
           sectionId: section.id,
@@ -87,6 +92,7 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
       if ((section.keyPoints && section.keyPoints.length > 0) || section.pullQuote) {
         pages.push({
           index: pageIndex++,
+          pageNumber: 0, // Will be set at the end
           kind: "article",
           article: {
             sectionId: section.id,
@@ -115,6 +121,7 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
       // Empty section, create one page anyway
       pages.push({
         index: pageIndex++,
+        pageNumber: 0, // Will be set at the end
         kind: "article",
         article: {
           sectionId: section.id,
@@ -157,6 +164,7 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
       
       pages.push({
         index: pageIndex++,
+        pageNumber: 0, // Will be set at the end
         kind: "article",
         article: {
           sectionId: section.id,
@@ -194,6 +202,6 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
     flushPage();
   }
 
-  // Re-index to ensure sequential 0-based indices
-  return pages.map((page, idx) => ({ ...page, index: idx }));
+  // Re-index to ensure sequential 0-based indices and assign page numbers
+  return pages.map((page, idx) => ({ ...page, index: idx, pageNumber: idx }));
 }
