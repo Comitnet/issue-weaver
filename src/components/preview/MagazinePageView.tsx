@@ -125,6 +125,8 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
   }
 
   if (page.kind === "contents") {
+    // Note: We need access to all pages to find the correct page numbers for each section
+    // This is a simplified version - you may need to pass pages array as a prop
     return (
       <PageFrame>
         <div
@@ -139,36 +141,42 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
           </div>
 
           <div className="space-y-4 flex-1 overflow-hidden">
-            {magazine.sections.map((section, index) => (
-              <div
-                key={section.id}
-                className="flex gap-4 items-start pb-3 border-b"
-                style={{ borderColor: `${palette.primary}25` }}
-              >
-                <span
-                  className="text-2xl font-bold flex-shrink-0 leading-none"
-                  style={{ color: palette.primary }}
+            {magazine.sections.map((section, index) => {
+              // Fallback: assuming sequential page numbering starting at page 2
+              // Ideally, this should look up the actual first page for this section
+              const sectionPageNumber = index + 2;
+              
+              return (
+                <div
+                  key={section.id}
+                  className="flex gap-4 items-start pb-3 border-b"
+                  style={{ borderColor: `${palette.primary}25` }}
                 >
-                  {String(index + 3).padStart(2, "0")}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p
-                    className="text-xs uppercase tracking-widest mb-1.5 font-bold"
-                    style={{ color: palette.secondary }}
+                  <span
+                    className="text-2xl font-bold flex-shrink-0 leading-none"
+                    style={{ color: palette.primary }}
                   >
-                    {section.label}
-                  </p>
-                  <h3 className="font-bold text-lg leading-tight mb-1" style={{ color: palette.text }}>
-                    {section.title}
-                  </h3>
-                  {section.subtitle && (
-                    <p className="text-sm leading-snug" style={{ color: palette.secondary, opacity: 0.9 }}>
-                      {section.subtitle}
+                    {String(sectionPageNumber).padStart(2, "0")}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className="text-xs uppercase tracking-widest mb-1.5 font-bold"
+                      style={{ color: palette.secondary }}
+                    >
+                      {section.label}
                     </p>
-                  )}
+                    <h3 className="font-bold text-lg leading-tight mb-1" style={{ color: palette.text }}>
+                      {section.title}
+                    </h3>
+                    {section.subtitle && (
+                      <p className="text-sm leading-snug" style={{ color: palette.secondary, opacity: 0.9 }}>
+                        {section.subtitle}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </PageFrame>
@@ -180,7 +188,7 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
     const isFirstPage = !isContinuation;
     const isFromEditor = section.label.toUpperCase() === "FROM THE EDITOR";
 
-    // Handle advertisement sections
+    // Handle advertisement sections (no page numbers or watermarks)
     if (section.kind === "advertisement") {
       const adLayout = section.adLayout || "full-page";
       
@@ -329,6 +337,9 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
 
     // Special handling for "FROM THE EDITOR" section
     if (isFromEditor) {
+      const isOddPage = page.pageNumber % 2 === 1;
+      const shouldShowWatermark = magazine.publisherLogoUrl;
+
       return (
         <PageFrame>
           <div className="relative w-full h-full overflow-hidden">
@@ -415,160 +426,214 @@ export const MagazinePageView = ({ magazine, page }: MagazinePageViewProps) => {
                   )}
                 </div>
               )}
+
+              {/* Page number footer */}
+              <footer className="h-8 flex items-center text-xs mt-4" style={{ color: section.heroImageUrl ? "rgba(255,255,255,0.5)" : `${palette.text}80` }}>
+                {isOddPage ? (
+                  <div className="w-full text-left">{page.pageNumber}</div>
+                ) : (
+                  <div className="w-full text-right">{page.pageNumber}</div>
+                )}
+              </footer>
             </div>
+
+            {/* Watermark */}
+            {shouldShowWatermark && (
+              <div
+                className={`pointer-events-none absolute bottom-6 opacity-20 z-30 ${
+                  isOddPage ? "right-8" : "left-8"
+                }`}
+              >
+                <img
+                  src={magazine.publisherLogoUrl!}
+                  alt={magazine.publisherName || "Publisher logo"}
+                  className="h-8 w-auto brightness-0 invert"
+                  style={{ filter: section.heroImageUrl ? "brightness(0) invert(1)" : "none" }}
+                />
+              </div>
+            )}
           </div>
         </PageFrame>
       );
     }
 
     // Regular article rendering
+    const isOddPage = page.pageNumber % 2 === 1;
+    const shouldShowWatermark = magazine.publisherLogoUrl && section.kind !== "advertisement";
+
     return (
       <PageFrame>
-        <div
-          className="h-full flex flex-col p-12"
-          style={{ backgroundColor: palette.background, color: palette.text }}
-        >
-          {/* Header - only on first page */}
-          {isFirstPage && (
-            <div className="mb-8">
-              <p
-                className="text-xs uppercase tracking-widest mb-3 font-bold"
-                style={{ color: palette.secondary }}
-              >
-                {section.label}
-              </p>
-              <h2 className="text-4xl font-bold mb-3 leading-tight" style={{ color: palette.primary }}>
-                {section.title}
-              </h2>
-              {section.subtitle && (
-                <p className="text-xl mb-4" style={{ color: palette.secondary, opacity: 0.9 }}>
-                  {section.subtitle}
+        <div className="relative w-full h-full">
+          <div
+            className="h-full flex flex-col p-12"
+            style={{ backgroundColor: palette.background, color: palette.text }}
+          >
+            {/* Header - only on first page */}
+            {isFirstPage && (
+              <div className="mb-8">
+                <p
+                  className="text-xs uppercase tracking-widest mb-3 font-bold"
+                  style={{ color: palette.secondary }}
+                >
+                  {section.label}
                 </p>
+                <h2 className="text-4xl font-bold mb-3 leading-tight" style={{ color: palette.primary }}>
+                  {section.title}
+                </h2>
+                {section.subtitle && (
+                  <p className="text-xl mb-4" style={{ color: palette.secondary, opacity: 0.9 }}>
+                    {section.subtitle}
+                  </p>
+                )}
+                <div className="w-16 h-1 rounded-full" style={{ backgroundColor: palette.secondary }} />
+              </div>
+            )}
+
+            {/* Continuation page header */}
+            {!isFirstPage && (
+              <div className="mb-6 pb-2 border-b" style={{ borderColor: `${palette.primary}25` }}>
+                <p className="text-xs uppercase tracking-wider" style={{ color: palette.secondary }}>
+                  {section.label} • Page {pageWithinSection}
+                </p>
+              </div>
+            )}
+
+            {/* Top image */}
+            {isFirstPage && renderImage("top")}
+
+            {/* Key Points and Pull Quote at top of second page */}
+            {!isFirstPage && pageWithinSection === 2 && (
+              <>
+                {/* Determine order when both are at the same location */}
+                {(() => {
+                  const keyPointsAtTop = section.keyPointsPlacement === "second-page-top" && showKeyPoints && section.keyPoints && section.keyPoints.length > 0;
+                  const pullQuoteAtTop = section.pullQuotePlacement === "second-page-top" && showPullQuote && section.pullQuote;
+                  const keyPointsFirst = section.keyPointsFirst !== false;
+
+                  const keyPointsElement = keyPointsAtTop && (
+                    <div className="mb-6 p-4 rounded-lg border-l-4" style={{ 
+                      backgroundColor: `${palette.primary}08`,
+                      borderColor: palette.secondary 
+                    }}>
+                      <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: palette.primary }}>
+                        Key Points
+                      </h3>
+                      <ul className="space-y-2">
+                        {section.keyPoints.map((point, idx) => (
+                          <li key={idx} className="text-sm flex items-start gap-2">
+                            <span style={{ color: palette.secondary }}>•</span>
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+
+                  const pullQuoteElement = pullQuoteAtTop && (
+                    <div className="mb-6 p-6 border-l-4" style={{ 
+                      backgroundColor: `${palette.secondary}10`,
+                      borderColor: palette.primary 
+                    }}>
+                      <p className="text-lg italic font-medium leading-relaxed" style={{ color: palette.text }}>
+                        "{section.pullQuote}"
+                      </p>
+                    </div>
+                  );
+
+                  if (keyPointsFirst) {
+                    return <>{keyPointsElement}{pullQuoteElement}</>;
+                  } else {
+                    return <>{pullQuoteElement}{keyPointsElement}</>;
+                  }
+                })()}
+              </>
+            )}
+
+            {/* Body text with columns */}
+            <div className={`flex-1 text-base leading-relaxed ${columnClass} overflow-visible`}>
+              {paragraphs.map((para, idx) => (
+                <p key={idx} className="mb-4 break-inside-avoid text-justify">
+                  {para}
+                </p>
+              ))}
+            </div>
+
+            {/* Key Points and Pull Quote at end of page */}
+            {(() => {
+              const showKeyPointsAtEnd = showKeyPoints && section.keyPoints && section.keyPoints.length > 0 && 
+                ((isFirstPage && section.keyPointsPlacement === "first-page-end") || 
+                 (pageWithinSection === 2 && section.keyPointsPlacement === "second-page-end"));
+              
+              const showPullQuoteAtEnd = showPullQuote && section.pullQuote && 
+                ((isFirstPage && section.pullQuotePlacement === "first-page-end") || 
+                 (pageWithinSection === 2 && section.pullQuotePlacement === "second-page-end"));
+              
+              const keyPointsFirst = section.keyPointsFirst !== false;
+
+              const keyPointsElement = showKeyPointsAtEnd && (
+                <div className="mt-6 p-4 rounded-lg border-l-4" style={{ 
+                  backgroundColor: `${palette.primary}08`,
+                  borderColor: palette.secondary 
+                }}>
+                  <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: palette.primary }}>
+                    Key Points
+                  </h3>
+                  <ul className="space-y-2">
+                    {section.keyPoints.map((point, idx) => (
+                      <li key={idx} className="text-sm flex items-start gap-2">
+                        <span style={{ color: palette.secondary }}>•</span>
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+
+              const pullQuoteElement = showPullQuoteAtEnd && (
+                <div className="mt-6 p-6 border-l-4" style={{ 
+                  backgroundColor: `${palette.secondary}10`,
+                  borderColor: palette.primary 
+                }}>
+                  <p className="text-lg italic font-medium leading-relaxed" style={{ color: palette.text }}>
+                    "{section.pullQuote}"
+                  </p>
+                </div>
+              );
+
+              if (keyPointsFirst) {
+                return <>{keyPointsElement}{pullQuoteElement}</>;
+              } else {
+                return <>{pullQuoteElement}{keyPointsElement}</>;
+              }
+            })()}
+
+            {/* Bottom image */}
+            {renderImage("bottom")}
+
+            {/* Page number footer - article pages only */}
+            <footer className="h-8 flex items-center text-xs mt-4" style={{ color: `${palette.text}80` }}>
+              {isOddPage ? (
+                <div className="w-full text-left">{page.pageNumber}</div>
+              ) : (
+                <div className="w-full text-right">{page.pageNumber}</div>
               )}
-              <div className="w-16 h-1 rounded-full" style={{ backgroundColor: palette.secondary }} />
-            </div>
-          )}
-
-          {/* Continuation page header */}
-          {!isFirstPage && (
-            <div className="mb-6 pb-2 border-b" style={{ borderColor: `${palette.primary}25` }}>
-              <p className="text-xs uppercase tracking-wider" style={{ color: palette.secondary }}>
-                {section.label} • Page {pageWithinSection}
-              </p>
-            </div>
-          )}
-
-          {/* Top image */}
-          {isFirstPage && renderImage("top")}
-
-          {/* Key Points and Pull Quote at top of second page */}
-          {!isFirstPage && pageWithinSection === 2 && (
-            <>
-              {/* Determine order when both are at the same location */}
-              {(() => {
-                const keyPointsAtTop = section.keyPointsPlacement === "second-page-top" && showKeyPoints && section.keyPoints && section.keyPoints.length > 0;
-                const pullQuoteAtTop = section.pullQuotePlacement === "second-page-top" && showPullQuote && section.pullQuote;
-                const keyPointsFirst = section.keyPointsFirst !== false;
-
-                const keyPointsElement = keyPointsAtTop && (
-                  <div className="mb-6 p-4 rounded-lg border-l-4" style={{ 
-                    backgroundColor: `${palette.primary}08`,
-                    borderColor: palette.secondary 
-                  }}>
-                    <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: palette.primary }}>
-                      Key Points
-                    </h3>
-                    <ul className="space-y-2">
-                      {section.keyPoints.map((point, idx) => (
-                        <li key={idx} className="text-sm flex items-start gap-2">
-                          <span style={{ color: palette.secondary }}>•</span>
-                          <span>{point}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-
-                const pullQuoteElement = pullQuoteAtTop && (
-                  <div className="mb-6 p-6 border-l-4" style={{ 
-                    backgroundColor: `${palette.secondary}10`,
-                    borderColor: palette.primary 
-                  }}>
-                    <p className="text-lg italic font-medium leading-relaxed" style={{ color: palette.text }}>
-                      "{section.pullQuote}"
-                    </p>
-                  </div>
-                );
-
-                if (keyPointsFirst) {
-                  return <>{keyPointsElement}{pullQuoteElement}</>;
-                } else {
-                  return <>{pullQuoteElement}{keyPointsElement}</>;
-                }
-              })()}
-            </>
-          )}
-
-          {/* Body text with columns */}
-          <div className={`flex-1 text-base leading-relaxed ${columnClass} overflow-visible`}>
-            {paragraphs.map((para, idx) => (
-              <p key={idx} className="mb-4 break-inside-avoid text-justify">
-                {para}
-              </p>
-            ))}
+            </footer>
           </div>
 
-          {/* Key Points and Pull Quote at end of page */}
-          {(() => {
-            const showKeyPointsAtEnd = showKeyPoints && section.keyPoints && section.keyPoints.length > 0 && 
-              ((isFirstPage && section.keyPointsPlacement === "first-page-end") || 
-               (pageWithinSection === 2 && section.keyPointsPlacement === "second-page-end"));
-            
-            const showPullQuoteAtEnd = showPullQuote && section.pullQuote && 
-              ((isFirstPage && section.pullQuotePlacement === "first-page-end") || 
-               (pageWithinSection === 2 && section.pullQuotePlacement === "second-page-end"));
-            
-            const keyPointsFirst = section.keyPointsFirst !== false;
-
-            const keyPointsElement = showKeyPointsAtEnd && (
-              <div className="mt-6 p-4 rounded-lg border-l-4" style={{ 
-                backgroundColor: `${palette.primary}08`,
-                borderColor: palette.secondary 
-              }}>
-                <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: palette.primary }}>
-                  Key Points
-                </h3>
-                <ul className="space-y-2">
-                  {section.keyPoints.map((point, idx) => (
-                    <li key={idx} className="text-sm flex items-start gap-2">
-                      <span style={{ color: palette.secondary }}>•</span>
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-
-            const pullQuoteElement = showPullQuoteAtEnd && (
-              <div className="mt-6 p-6 border-l-4" style={{ 
-                backgroundColor: `${palette.secondary}10`,
-                borderColor: palette.primary 
-              }}>
-                <p className="text-lg italic font-medium leading-relaxed" style={{ color: palette.text }}>
-                  "{section.pullQuote}"
-                </p>
-              </div>
-            );
-
-            if (keyPointsFirst) {
-              return <>{keyPointsElement}{pullQuoteElement}</>;
-            } else {
-              return <>{pullQuoteElement}{keyPointsElement}</>;
-            }
-          })()}
-
-          {/* Bottom image */}
-          {renderImage("bottom")}
+          {/* Watermark - publisher logo */}
+          {shouldShowWatermark && (
+            <div
+              className={`pointer-events-none absolute bottom-6 opacity-20 ${
+                isOddPage ? "right-8" : "left-8"
+              }`}
+            >
+              <img
+                src={magazine.publisherLogoUrl!}
+                alt={magazine.publisherName || "Publisher logo"}
+                className="h-8 w-auto"
+              />
+            </div>
+          )}
         </div>
       </PageFrame>
     );
