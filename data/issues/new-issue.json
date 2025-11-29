@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "id": "0327bd16-eac5-4fc5-818a-7ba3f81d8eb1",
+    "title": "New Magazine",
+    "slug": "new-issue",
+    "createdAt": "2025-11-29T09:10:08.737Z",
+    "updatedAt": "2025-11-29T09:31:23.376Z"
+  },
+  "magazine": {
+    "id": "0327bd16-eac5-4fc5-818a-7ba3f81d8eb1",
+    "title": "New Magazine",
+    "subtitle": "Your subtitle here",
+    "tagline": "Excellence in Publishing",
+    "issueNumber": "01",
+    "issueLabel": "Volume 1",
+    "themeTitle": "Innovation & Technology",
+    "themeSummary": "Exploring the future of digital publishing",
+    "publisherName": "Your Publisher",
+    "publisherWebsite": "https://example.com",
+    "publicationDate": "2025-11-29",
+    "language": "en",
+    "colorPalette": {
+      "primary": "#1e293b",
+      "secondary": "#f59e0b",
+      "background": "#ffffff",
+      "text": "#0f172a"
+    },
+    "logoLibrary": [],
+    "sections": [
+      {
+        "id": "4491df59-313d-4895-b283-a53b0553fa12",
+        "label": "Test",
+        "title": "Welcome to Magazine Builder",
+        "subtitle": "Create beautiful magazines with ease",
+        "keyPoints": [
+          "Intuitive editor interface",
+          "Live preview functionality",
+          "Export to PDF and JSON"
+        ],
+        "bodyMarkdown": "# Getting Started\n\nThis is your first section. Edit the content, add images, and customize the layout to create your perfect magazine.\n\n## Key Features\n\n- Rich text editing with Markdown\n- Image management and AI generation\n- Color palette customization\n- Professional print-ready output",
+        "showOnCover": true
+      }
+    ]
+  }
+}
