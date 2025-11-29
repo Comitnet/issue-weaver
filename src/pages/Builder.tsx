@@ -8,8 +8,10 @@ import { SectionEditor } from "@/components/builder/SectionEditor";
 import { CoverEditor } from "@/components/builder/CoverEditor";
 import { PreviewPanel } from "@/components/preview/PreviewPanel";
 import { MagazineSettingsDialog } from "@/components/builder/MagazineSettingsDialog";
+import { ShareEmbedModal } from "@/components/share/ShareEmbedModal";
 import { toast } from "@/hooks/use-toast";
 import { exportMagazineAsDocx } from "@/lib/exportDocx";
+import { saveMagazineById } from "@/lib/magazineStorage";
 
 const Builder = () => {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ const Builder = () => {
   );
   const [isCoverSelected, setIsCoverSelected] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const selectedSection = magazine.sections.find((s) => s.id === selectedSectionId);
 
@@ -126,7 +129,9 @@ const Builder = () => {
   };
 
   const handleShare = () => {
-    toast({ title: "Share & Embed", description: "Share and embed functionality coming soon" });
+    // Save the magazine by ID so the reader route can load it
+    saveMagazineById(magazine);
+    setShareOpen(true);
   };
 
   const handleNewIssue = () => {
@@ -155,6 +160,13 @@ const Builder = () => {
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
         onUpdate={updateMagazine}
+      />
+      
+      <ShareEmbedModal
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        issueId={magazine.id}
+        issueTitle={magazine.title}
       />
       
       <div className="flex-1 flex overflow-hidden">
