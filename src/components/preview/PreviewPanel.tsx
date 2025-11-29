@@ -1,6 +1,6 @@
 import { Magazine } from "@/types/magazine";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { useState, useMemo } from "react";
 import { MagazinePageView } from "./MagazinePageView";
 import { paginateMagazine } from "@/lib/pagination";
@@ -39,6 +39,14 @@ export const PreviewPanel = ({ magazine }: PreviewPanelProps) => {
     <div className="h-full bg-muted/30 p-6 overflow-y-auto flex flex-col">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setCurrentPage(0)}
+            title="Go to cover"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </Button>
           <Button
             variant="outline"
             size="icon"
