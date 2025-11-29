@@ -6,7 +6,21 @@
       "slug": "digital-vault",
       "createdAt": "2025-11-22T00:00:00.000Z",
       "updatedAt": "2025-11-29T00:00:00.000Z"
+    },
+    {
+      "id": "8a9d11ba-94f1-47e9-b19b-d9e4b5ee0a7b",
+      "title": "FDA CYBER READINESS 2026",
+      "slug": "fda-cyber-readiness-2026",
+      "createdAt": "2025-11-29T08:44:24.266Z",
+      "updatedAt": "2025-11-29T08:44:24.266Z"
+    },
+    {
+      "id": "1316f109-9ca5-46ce-b932-ed6854ab8f3f",
+      "title": "First Issue",
+      "slug": "first-issue",
+      "createdAt": "2025-11-29T08:37:32.098Z",
+      "updatedAt": "2025-11-29T08:37:32.098Z"
     }
   ],
-  "lastOpenedId": "dcb801ea-42aa-46ed-b585-21c96ccb0e6c"
+  "lastOpenedId": "8a9d11ba-94f1-47e9-b19b-d9e4b5ee0a7b"
 }

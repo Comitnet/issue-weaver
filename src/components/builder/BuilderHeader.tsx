@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Download, Upload, FileJson, FileText, Settings, Share2, Plus, Save, Check, AlertCircle, Loader2 } from "lucide-react";
+import { Download, Upload, FileJson, FileText, Settings, Share2, Plus, Copy, ClipboardCheck } from "lucide-react";
 import { Magazine } from "@/types/magazine";
 import { MagazineIssueMeta } from "@/types/issue";
 import { IssueSelector } from "./IssueSelector";
-import { format } from "date-fns";
 import {
   Tooltip,
   TooltipContent,
@@ -15,13 +14,11 @@ interface BuilderHeaderProps {
   issues: MagazineIssueMeta[];
   currentIssueId: string | undefined;
   isDirty: boolean;
-  isDevEnvironment: boolean;
-  lastSaved: Date | null;
-  isSaving?: boolean;
+  hasCopied?: boolean;
   onSelectIssue: (id: string) => void;
   onNew: () => void;
-  onSave: () => void;
-  onExportJSON: () => void;
+  onExportForGit: () => void;
+  onDownloadJSON: () => void;
   onImportJSON: () => void;
   onExportPDF: () => void;
   onExportDocx: () => void;
@@ -34,13 +31,11 @@ export const BuilderHeader = ({
   issues,
   currentIssueId,
   isDirty,
-  isDevEnvironment,
-  lastSaved,
-  isSaving,
+  hasCopied,
   onSelectIssue,
   onNew,
-  onSave,
-  onExportJSON,
+  onExportForGit,
+  onDownloadJSON,
   onImportJSON,
   onExportPDF,
   onExportDocx,
@@ -75,45 +70,46 @@ export const BuilderHeader = ({
           
           <div className="h-6 w-px bg-border" />
           
-          {/* Save button with status indicator */}
+          {/* Export for Git - copies JSON to clipboard for AI to save */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
                 variant={isDirty ? "default" : "outline"} 
                 size="sm" 
-                onClick={onSave}
-                disabled={!isDevEnvironment || isSaving}
-                className="min-w-[100px]"
+                onClick={onExportForGit}
+                className="min-w-[130px]"
               >
-                {isSaving ? (
+                {hasCopied ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : isDirty ? (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    Save
+                    <ClipboardCheck className="mr-2 h-4 w-4" />
+                    Copied!
                   </>
                 ) : (
                   <>
-                    <Check className="mr-2 h-4 w-4" />
-                    Saved
+                    <Copy className="mr-2 h-4 w-4" />
+                    Export for Git
                   </>
                 )}
               </Button>
             </TooltipTrigger>
+            <TooltipContent className="max-w-xs">
+              <p className="font-medium">Copy issue JSON to clipboard</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Paste the JSON in the AI chat to save it to the repository.
+                The browser cannot write to Git directly.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="sm" onClick={onDownloadJSON}>
+                <Download className="mr-2 h-4 w-4" />
+                Download JSON
+              </Button>
+            </TooltipTrigger>
             <TooltipContent>
-              {!isDevEnvironment ? (
-                <div className="flex items-center gap-2 text-yellow-500">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>Repo-backed saving only available in dev environment</span>
-                </div>
-              ) : lastSaved ? (
-                <span>Last saved: {format(lastSaved, "h:mm:ss a")}</span>
-              ) : (
-                <span>Not saved yet</span>
-              )}
+              <p>Download issue as {magazine.title.toLowerCase().replace(/\s+/g, '-')}.json</p>
             </TooltipContent>
           </Tooltip>
           
@@ -124,18 +120,13 @@ export const BuilderHeader = ({
             Import
           </Button>
           
-          <Button variant="outline" size="sm" onClick={onExportJSON}>
-            <FileJson className="mr-2 h-4 w-4" />
-            Export JSON
-          </Button>
-          
           <Button variant="outline" size="sm" onClick={onExportPDF}>
             <FileText className="mr-2 h-4 w-4" />
             Export PDF
           </Button>
           
           <Button variant="outline" size="sm" onClick={onExportDocx}>
-            <Download className="mr-2 h-4 w-4" />
+            <FileJson className="mr-2 h-4 w-4" />
             Export DOCX
           </Button>
           
