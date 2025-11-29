@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMagazine } from "@/hooks/useMagazine";
+import { useIssues } from "@/hooks/useIssues";
 import { Section } from "@/types/magazine";
 import { BuilderHeader } from "@/components/builder/BuilderHeader";
 import { SectionList } from "@/components/builder/SectionList";
@@ -9,19 +9,54 @@ import { CoverEditor } from "@/components/builder/CoverEditor";
 import { PreviewPanel } from "@/components/preview/PreviewPanel";
 import { MagazineSettingsDialog } from "@/components/builder/MagazineSettingsDialog";
 import { ShareEmbedModal } from "@/components/share/ShareEmbedModal";
+import { NewIssueDialog } from "@/components/builder/NewIssueDialog";
 import { toast } from "@/hooks/use-toast";
 import { exportMagazineAsDocx } from "@/lib/exportDocx";
 import { saveMagazineById } from "@/lib/magazineStorage";
+import { Loader2 } from "lucide-react";
 
 const Builder = () => {
   const navigate = useNavigate();
-  const { magazine, updateMagazine, resetMagazine, importMagazine, exportMagazine } = useMagazine();
-  const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(
-    magazine.sections[0]?.id
-  );
+  const {
+    issues,
+    currentIssue,
+    isLoading,
+    isDirty,
+    isDevEnvironment,
+    lastSaved,
+    selectIssue,
+    createIssue,
+    saveCurrentIssue,
+    updateMagazine,
+  } = useIssues();
+
+  const magazine = currentIssue?.magazine;
+  
+  const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>();
   const [isCoverSelected, setIsCoverSelected] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [newIssueOpen, setNewIssueOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Set initial section selection when magazine loads
+  useEffect(() => {
+    if (magazine?.sections[0]?.id && !selectedSectionId) {
+      setSelectedSectionId(magazine.sections[0].id);
+    }
+  }, [magazine, selectedSectionId]);
+
+  // Loading state
+  if (isLoading || !magazine) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <p className="text-muted-foreground">Loading issues...</p>
+        </div>
+      </div>
+    );
+  }
 
   const selectedSection = magazine.sections.find((s) => s.id === selectedSectionId);
 
@@ -42,6 +77,8 @@ const Builder = () => {
       title: "Untitled",
       keyPoints: [],
       bodyMarkdown: "",
+      keyPointsPlacement: "first-page-end",
+      pullQuotePlacement: "second-page-top",
     };
     updateMagazine({ sections: [...magazine.sections, newSection] });
     setSelectedSectionId(newSection.id);
@@ -69,9 +106,27 @@ const Builder = () => {
     updateMagazine({ sections: newSections });
   };
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    const result = await saveCurrentIssue();
+    setIsSaving(false);
+    
+    if (result.success) {
+      toast({ 
+        title: "Issue saved", 
+        description: `Saved to data/issues/${currentIssue?.meta.slug}.json` 
+      });
+    } else {
+      toast({ 
+        title: "Save failed", 
+        description: result.error,
+        variant: "destructive" 
+      });
+    }
+  };
+
   const handleExportJSON = () => {
-    const data = exportMagazine();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(magazine, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -92,7 +147,7 @@ const Builder = () => {
         reader.onload = (event) => {
           try {
             const data = JSON.parse(event.target?.result as string);
-            importMagazine(data);
+            updateMagazine(data);
             setSelectedSectionId(data.sections[0]?.id);
             toast({ title: "Magazine imported successfully" });
           } catch {
@@ -135,18 +190,37 @@ const Builder = () => {
   };
 
   const handleNewIssue = () => {
-    if (confirm("Create a new issue? Current work will be saved to your previous session.")) {
-      resetMagazine();
-      setSelectedSectionId(undefined);
-      toast({ title: "New issue created" });
+    setNewIssueOpen(true);
+  };
+
+  const handleCreateIssue = async (title: string, template: "blank" | "demo" | "current") => {
+    const newIssue = await createIssue(title, template);
+    if (newIssue) {
+      setSelectedSectionId(newIssue.magazine.sections[0]?.id);
+      toast({ title: "Issue created", description: `Created "${title}"` });
     }
+  };
+
+  const handleSelectIssue = async (id: string) => {
+    await selectIssue(id);
+    // Reset selection state for new issue
+    setSelectedSectionId(undefined);
+    setIsCoverSelected(false);
   };
 
   return (
     <div className="flex flex-col h-screen">
       <BuilderHeader
         magazine={magazine}
+        issues={issues}
+        currentIssueId={currentIssue?.meta.id}
+        isDirty={isDirty}
+        isDevEnvironment={isDevEnvironment}
+        lastSaved={lastSaved}
+        isSaving={isSaving}
+        onSelectIssue={handleSelectIssue}
         onNew={handleNewIssue}
+        onSave={handleSave}
         onExportJSON={handleExportJSON}
         onImportJSON={handleImportJSON}
         onExportPDF={handleExportPDF}
@@ -167,6 +241,13 @@ const Builder = () => {
         onOpenChange={setShareOpen}
         issueId={magazine.id}
         issueTitle={magazine.title}
+      />
+      
+      <NewIssueDialog
+        open={newIssueOpen}
+        onOpenChange={setNewIssueOpen}
+        onCreate={handleCreateIssue}
+        hasCurrentIssue={!!currentIssue}
       />
       
       <div className="flex-1 flex overflow-hidden">
