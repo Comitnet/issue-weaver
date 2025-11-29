@@ -1,1 +1,7 @@
-
+{
+  "issueId": "2025-01-dora-year-one",
+  "items": [
+    { "page": 2, "slug": "editorial-dora-year-one", "title": "From the Editor: DORA Year One" },
+    { "page": 4, "slug": "dora-kpi-playbook", "title": "Five KPIs That Make or Break DORA Resilience" }
+  ]
+}
