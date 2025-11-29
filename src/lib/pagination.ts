@@ -117,8 +117,25 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
       .map((p) => p.trim())
       .filter((p) => p.length > 0);
 
+    // Determine placement settings with defaults
+    const keyPointsPlacement = section.keyPointsPlacement || "first-page-end";
+    const pullQuotePlacement = section.pullQuotePlacement || "first-page-end";
+    const keyPointsFirst = section.keyPointsFirst !== false; // default true
+
+    // Check if section has key points or pull quote that need to be shown
+    const hasKeyPoints = section.keyPoints && section.keyPoints.length > 0 && keyPointsPlacement !== "none";
+    const hasPullQuote = section.pullQuote && pullQuotePlacement !== "none";
+
+    // Check if any content needs to appear on page 2
+    const needsSecondPageForKeyPoints = hasKeyPoints && (keyPointsPlacement === "second-page-top" || keyPointsPlacement === "second-page-end");
+    const needsSecondPageForPullQuote = hasPullQuote && (pullQuotePlacement === "second-page-top" || pullQuotePlacement === "second-page-end");
+    const requiresDedicatedSecondPage = needsSecondPageForKeyPoints || needsSecondPageForPullQuote;
+
     if (paragraphs.length === 0) {
       // Empty section, create one page anyway
+      const showKeyPointsOnPage1 = hasKeyPoints && keyPointsPlacement === "first-page-end";
+      const showPullQuoteOnPage1 = hasPullQuote && pullQuotePlacement === "first-page-end";
+      
       pages.push({
         index: pageIndex++,
         pageNumber: 0, // Will be set at the end
@@ -131,19 +148,37 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
           isContinuation: false,
           paragraphs: [],
           pageWithinSection: 1,
+          showKeyPoints: showKeyPointsOnPage1,
+          showPullQuote: showPullQuoteOnPage1,
         },
       });
+
+      // If key points or pull quote need second page placement, create dedicated page 2
+      if (requiresDedicatedSecondPage) {
+        pages.push({
+          index: pageIndex++,
+          pageNumber: 0,
+          kind: "article",
+          article: {
+            sectionId: section.id,
+            sectionLabel: section.label,
+            sectionTitle: section.title,
+            section,
+            isContinuation: true,
+            paragraphs: [],
+            pageWithinSection: 2,
+            showKeyPoints: needsSecondPageForKeyPoints,
+            showPullQuote: needsSecondPageForPullQuote,
+          },
+        });
+      }
       continue;
     }
 
     let currentPageParagraphs: string[] = [];
     let currentCharCount = 0;
     let pageWithinSection = 0;
-
-    // Determine placement settings
-    const keyPointsPlacement = section.keyPointsPlacement || "first-page-end";
-    const pullQuotePlacement = section.pullQuotePlacement || "first-page-end";
-    const keyPointsFirst = section.keyPointsFirst !== false; // default true
+    const sectionPages: MagazinePage[] = [];
 
     const flushPage = () => {
       if (currentPageParagraphs.length === 0) return;
@@ -155,14 +190,14 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
       let showPullQuote = false;
 
       if (pageWithinSection === 1) {
-        showKeyPoints = keyPointsPlacement === "first-page-end";
-        showPullQuote = pullQuotePlacement === "first-page-end";
+        showKeyPoints = hasKeyPoints && keyPointsPlacement === "first-page-end";
+        showPullQuote = hasPullQuote && pullQuotePlacement === "first-page-end";
       } else if (pageWithinSection === 2) {
-        showKeyPoints = keyPointsPlacement === "second-page-top" || keyPointsPlacement === "second-page-end";
-        showPullQuote = pullQuotePlacement === "second-page-top" || pullQuotePlacement === "second-page-end";
+        showKeyPoints = hasKeyPoints && (keyPointsPlacement === "second-page-top" || keyPointsPlacement === "second-page-end");
+        showPullQuote = hasPullQuote && (pullQuotePlacement === "second-page-top" || pullQuotePlacement === "second-page-end");
       }
       
-      pages.push({
+      sectionPages.push({
         index: pageIndex++,
         pageNumber: 0, // Will be set at the end
         kind: "article",
@@ -200,6 +235,30 @@ export function paginateMagazine(magazine: Magazine): MagazinePage[] {
 
     // Flush remaining paragraphs
     flushPage();
+
+    // After flushing all content, check if we need a dedicated second page for key points/pull quote
+    // This happens when content only created 1 page but placement requires page 2
+    if (pageWithinSection === 1 && requiresDedicatedSecondPage) {
+      sectionPages.push({
+        index: pageIndex++,
+        pageNumber: 0,
+        kind: "article",
+        article: {
+          sectionId: section.id,
+          sectionLabel: section.label,
+          sectionTitle: section.title,
+          section,
+          isContinuation: true,
+          paragraphs: [],
+          pageWithinSection: 2,
+          showKeyPoints: needsSecondPageForKeyPoints,
+          showPullQuote: needsSecondPageForPullQuote,
+        },
+      });
+    }
+
+    // Add all section pages to the main pages array
+    pages.push(...sectionPages);
   }
 
   // Re-index to ensure sequential 0-based indices and assign page numbers
