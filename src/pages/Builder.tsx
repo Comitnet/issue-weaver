@@ -13,6 +13,7 @@ import { NewIssueDialog } from "@/components/builder/NewIssueDialog";
 import { toast } from "@/hooks/use-toast";
 import { exportMagazineAsDocx } from "@/lib/exportDocx";
 import { saveMagazineById } from "@/lib/magazineStorage";
+import { copyIssueToClipboard, downloadIssueAsJson } from "@/lib/issueExport";
 import { Loader2 } from "lucide-react";
 
 const Builder = () => {
@@ -22,11 +23,8 @@ const Builder = () => {
     currentIssue,
     isLoading,
     isDirty,
-    isDevEnvironment,
-    lastSaved,
     selectIssue,
     createIssue,
-    saveCurrentIssue,
     updateMagazine,
   } = useIssues();
 
@@ -37,7 +35,7 @@ const Builder = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [newIssueOpen, setNewIssueOpen] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [hasCopied, setHasCopied] = useState(false);
 
   // Set initial section selection when magazine loads
   useEffect(() => {
@@ -106,34 +104,40 @@ const Builder = () => {
     updateMagazine({ sections: newSections });
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    const result = await saveCurrentIssue();
-    setIsSaving(false);
+  /**
+   * Export for Git: Copy the full issue JSON to clipboard.
+   * User then pastes it in AI chat to persist to data/issues/<slug>.json
+   */
+  const handleExportForGit = async () => {
+    if (!currentIssue) return;
     
-    if (result.success) {
+    const success = await copyIssueToClipboard(currentIssue);
+    
+    if (success) {
+      setHasCopied(true);
       toast({ 
-        title: "Issue saved", 
-        description: `Saved to data/issues/${currentIssue?.meta.slug}.json` 
+        title: "Issue JSON copied to clipboard", 
+        description: "Paste it in the AI chat to save to the repository.",
       });
+      
+      // Reset the "Copied!" state after 3 seconds
+      setTimeout(() => setHasCopied(false), 3000);
     } else {
       toast({ 
-        title: "Save failed", 
-        description: result.error,
+        title: "Failed to copy", 
+        description: "Could not copy to clipboard. Try Download JSON instead.",
         variant: "destructive" 
       });
     }
   };
 
-  const handleExportJSON = () => {
-    const blob = new Blob([JSON.stringify(magazine, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${magazine.title.replace(/\s+/g, "-").toLowerCase()}-${magazine.issueNumber}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast({ title: "JSON exported successfully" });
+  /**
+   * Download the issue as a JSON file (backup option)
+   */
+  const handleDownloadJSON = () => {
+    if (!currentIssue) return;
+    downloadIssueAsJson(currentIssue);
+    toast({ title: "JSON downloaded", description: `Saved as ${currentIssue.meta.slug}.json` });
   };
 
   const handleImportJSON = () => {
@@ -147,8 +151,13 @@ const Builder = () => {
         reader.onload = (event) => {
           try {
             const data = JSON.parse(event.target?.result as string);
-            updateMagazine(data);
-            setSelectedSectionId(data.sections[0]?.id);
+            // Support both full issue files (with meta+magazine) and raw magazine objects
+            if (data.magazine && data.meta) {
+              updateMagazine(data.magazine);
+            } else {
+              updateMagazine(data);
+            }
+            setSelectedSectionId(data.magazine?.sections[0]?.id || data.sections[0]?.id);
             toast({ title: "Magazine imported successfully" });
           } catch {
             toast({ title: "Failed to import", description: "Invalid JSON file", variant: "destructive" });
@@ -197,7 +206,10 @@ const Builder = () => {
     const newIssue = await createIssue(title, template);
     if (newIssue) {
       setSelectedSectionId(newIssue.magazine.sections[0]?.id);
-      toast({ title: "Issue created", description: `Created "${title}"` });
+      toast({ 
+        title: "Issue created in memory", 
+        description: `Use "Export for Git" to save "${title}" to the repository.`
+      });
     }
   };
 
@@ -215,13 +227,11 @@ const Builder = () => {
         issues={issues}
         currentIssueId={currentIssue?.meta.id}
         isDirty={isDirty}
-        isDevEnvironment={isDevEnvironment}
-        lastSaved={lastSaved}
-        isSaving={isSaving}
+        hasCopied={hasCopied}
         onSelectIssue={handleSelectIssue}
         onNew={handleNewIssue}
-        onSave={handleSave}
-        onExportJSON={handleExportJSON}
+        onExportForGit={handleExportForGit}
+        onDownloadJSON={handleDownloadJSON}
         onImportJSON={handleImportJSON}
         onExportPDF={handleExportPDF}
         onExportDocx={handleExportDocx}

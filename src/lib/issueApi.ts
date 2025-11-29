@@ -1,170 +1,62 @@
 /**
- * API client for repo-backed issue storage
- * In dev mode, this calls the Vite dev server API
- * In production, file writing is not supported
+ * API client for issue storage
+ * 
+ * IMPORTANT: LOVABLE SANDBOX LIMITATIONS
+ * ======================================
+ * In Lovable's cloud sandbox, the browser CANNOT write to the Git repository.
+ * 
+ * - READ functions (loadIssuesIndex, loadIssue, loadDemoTemplate) WORK
+ *   They fetch static JSON files from /data/issues/*.json
+ * 
+ * - WRITE functions (saveIssue, updateIssuesIndex, deleteIssue) DO NOT PERSIST
+ *   They were designed for a local dev environment with a Vite plugin.
+ *   In Lovable, these calls go nowhere useful.
+ * 
+ * To persist changes in Lovable:
+ * 1. Use "Export for Git" in the UI to copy issue JSON
+ * 2. Paste the JSON in the AI chat
+ * 3. AI writes to data/issues/<slug>.json using Lovable file tools
  */
 
-import { MagazineIssueFile, MagazineIssueMeta, IssuesIndex } from '@/types/issue';
-
-const API_BASE = '/__api';
-
-interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
+import { MagazineIssueFile, IssuesIndex } from '@/types/issue';
 
 /**
- * Check if we're in a dev environment that supports file writing
- */
-export async function checkDevEnvironment(): Promise<boolean> {
-  try {
-    const response = await fetch(`${API_BASE}/health`);
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Load the issues index
+ * Load the issues index from the repo
+ * Fetches /data/issues/index.json
  */
 export async function loadIssuesIndex(): Promise<IssuesIndex> {
-  try {
-    // First try the API (dev mode)
-    const apiResponse = await fetch(`${API_BASE}/issues`);
-    if (apiResponse.ok) {
-      const result: ApiResponse<IssuesIndex> = await apiResponse.json();
-      if (result.success && result.data) {
-        return result.data;
-      }
-    }
-  } catch {
-    // API not available, fall back to static file
-  }
-  
-  // Fall back to static file fetch
   try {
     const response = await fetch('/data/issues/index.json');
     if (response.ok) {
       return await response.json();
     }
   } catch {
-    // File doesn't exist
+    // File doesn't exist or fetch failed
   }
   
   return { issues: [] };
 }
 
 /**
- * Load a specific issue by slug
+ * Load a specific issue by slug from the repo
+ * Fetches /data/issues/<slug>.json
  */
 export async function loadIssue(slug: string): Promise<MagazineIssueFile | null> {
-  try {
-    // First try the API (dev mode)
-    const apiResponse = await fetch(`${API_BASE}/issues/${slug}`);
-    if (apiResponse.ok) {
-      const result: ApiResponse<MagazineIssueFile> = await apiResponse.json();
-      if (result.success && result.data) {
-        return result.data;
-      }
-    }
-  } catch {
-    // API not available, fall back to static file
-  }
-  
-  // Fall back to static file fetch
   try {
     const response = await fetch(`/data/issues/${slug}.json`);
     if (response.ok) {
       return await response.json();
     }
   } catch {
-    // File doesn't exist
+    // File doesn't exist or fetch failed
   }
   
   return null;
 }
 
 /**
- * Save an issue (creates or updates)
- * Returns success status and any error message
- */
-export async function saveIssue(issue: MagazineIssueFile): Promise<{ success: boolean; error?: string }> {
-  try {
-    const response = await fetch(`${API_BASE}/issues/${issue.meta.slug}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(issue),
-    });
-    
-    const result: ApiResponse = await response.json();
-    
-    if (result.success) {
-      return { success: true };
-    }
-    
-    return { success: false, error: result.error || 'Unknown error' };
-  } catch (error) {
-    return { 
-      success: false, 
-      error: 'Repo-backed saving is only available in the dev environment. Use Export JSON instead.' 
-    };
-  }
-}
-
-/**
- * Update the issues index
- */
-export async function updateIssuesIndex(index: IssuesIndex): Promise<{ success: boolean; error?: string }> {
-  try {
-    const response = await fetch(`${API_BASE}/issues`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(index),
-    });
-    
-    const result: ApiResponse = await response.json();
-    
-    if (result.success) {
-      return { success: true };
-    }
-    
-    return { success: false, error: result.error || 'Unknown error' };
-  } catch (error) {
-    return { 
-      success: false, 
-      error: 'Repo-backed saving is only available in the dev environment.' 
-    };
-  }
-}
-
-/**
- * Delete an issue
- */
-export async function deleteIssue(slug: string): Promise<{ success: boolean; error?: string }> {
-  try {
-    const response = await fetch(`${API_BASE}/issues/${slug}`, {
-      method: 'DELETE',
-    });
-    
-    const result: ApiResponse = await response.json();
-    
-    if (result.success) {
-      return { success: true };
-    }
-    
-    return { success: false, error: result.error || 'Unknown error' };
-  } catch (error) {
-    return { 
-      success: false, 
-      error: 'Repo-backed deletion is only available in the dev environment.' 
-    };
-  }
-}
-
-/**
  * Load the demo template
+ * Fetches /data/demo.json
  */
 export async function loadDemoTemplate(): Promise<MagazineIssueFile | null> {
   try {
@@ -187,4 +79,47 @@ export async function loadDemoTemplate(): Promise<MagazineIssueFile | null> {
     // Demo not available
   }
   return null;
+}
+
+// ============================================================================
+// DEPRECATED: Write functions that don't work in Lovable
+// These are kept for reference but should not be used.
+// Use "Export for Git" workflow instead.
+// ============================================================================
+
+/**
+ * @deprecated Does not persist in Lovable. Use "Export for Git" instead.
+ */
+export async function saveIssue(_issue: MagazineIssueFile): Promise<{ success: boolean; error?: string }> {
+  return { 
+    success: false, 
+    error: 'Repo-backed saving is not available in Lovable. Use "Export for Git" to copy JSON, then paste it in the AI chat.' 
+  };
+}
+
+/**
+ * @deprecated Does not persist in Lovable. Use "Export for Git" instead.
+ */
+export async function updateIssuesIndex(_index: IssuesIndex): Promise<{ success: boolean; error?: string }> {
+  return { 
+    success: false, 
+    error: 'Repo-backed saving is not available in Lovable. Use "Export for Git" to copy JSON, then paste it in the AI chat.' 
+  };
+}
+
+/**
+ * @deprecated Does not persist in Lovable.
+ */
+export async function deleteIssue(_slug: string): Promise<{ success: boolean; error?: string }> {
+  return { 
+    success: false, 
+    error: 'Repo-backed deletion is not available in Lovable. Ask the AI to delete the file instead.' 
+  };
+}
+
+/**
+ * @deprecated No longer used. Always returns false in Lovable.
+ */
+export async function checkDevEnvironment(): Promise<boolean> {
+  return false;
 }
